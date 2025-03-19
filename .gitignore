@@ -5,7 +5,8 @@
 !.gitignore
 !LICENSE
 !README.md
-
+!intro.md
+!notes-workshop-fossgis.md
 # gh-pages includes
 !_static/
 !content/
