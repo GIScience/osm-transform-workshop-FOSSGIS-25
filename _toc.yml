@@ -1,0 +1,51 @@
+# Table of contents
+# Learn more at https://jupyterbook.org/customize/toc.html
+
+format: jb-book
+root: intro
+parts:
+- caption: Workshop Content
+  chapters:
+   - file: content/openrouteservice
+     title: 1. openrouteservice aufsetzen
+   - file: content/osm-transform
+     title: 2. Arbeiten mit osm-transform
+   - file: content/nearest-poi
+     title: 3. Den nächsten POI finden
+#   - file: tutorial/openrouteservice
+#     title: Openrouteservice
+#   - file: tutorial/qgis
+#     title: QGIS
+#   - file: tutorial/integration
+#     title: Combining the services
+#
+#- caption: OpenStreetMap
+#  maxdepth: 0
+#  chapters:
+#    - file: openstreetmap/intro.md
+#      title: What is OpenStreetMap?
+#
+#- caption: NetAScore
+#  maxdepth: 0
+#  chapters:
+#    - file: netascore/intro.md
+#      title: What is NetAScore?
+#
+#- caption: openrouteservice
+#  maxdepth: 0
+#  chapters:
+#  - file: openrouteservice/01_what
+#    title: What is openrouteservice?
+#  - file: openrouteservice/02_how
+#    title: How to use openrouteservice?
+#  - file: openrouteservice/03_ecosystem
+#    title: How to integrate openrouteservice?
+#
+#
+#- caption: Research and usecases
+#  chapters:
+#    - file: openrouteservice/usecases/health_access
+#    - file: openrouteservice/usecases/disaster_portal
+#    - file: openrouteservice/usecases/green_routing
+#    - file: openrouteservice/research/centrality
+
