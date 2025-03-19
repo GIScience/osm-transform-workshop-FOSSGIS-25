@@ -20,7 +20,7 @@ Der muss noch geupdated werden.
 ## Wer sind wir
 
 
-```{image} ./img/psotta.png
+```{image} ./img/psotta.jpg
 :alt: Julian Psotta
 :class: organiser-profile-photo
 ```
@@ -29,7 +29,7 @@ Bisschen was zu Julian
 
 <div style="clear: both"></div>
 
-```{image} ./img/schnell.png
+```{image} ./img/schnell.jpg
 :alt: Jakob Schnell
 :class: organiser-profile-photo
 ```
