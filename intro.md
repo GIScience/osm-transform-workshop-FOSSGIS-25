@@ -39,7 +39,12 @@ Bisschen was zu Jakob.
 
 <div style="clear: both"></div>
 
-**Kontakt**
+### Kontakt
+
+```{image} ./img/heigit_logo.png
+:alt: HeiGIT logo
+:class: footer-logo
+```
 
 Julian Psotta
 [julian.psotta@heigit.org](mailto:julian.psotta@heigit.org)
@@ -47,9 +52,3 @@ Julian Psotta
 
 Jakob Schnell
 [jakob.schnell@heigit.org](mailto:jakob.schnell@heigit.org)
-
-
-```{image} ./img/heigit_logo.png
-:alt: HeiGIT logo
-:class: footer-logo
-```
