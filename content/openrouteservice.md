@@ -15,7 +15,7 @@ Wir bereiten nun die Umgebung für den erfolgreichen Start eines Openrouteservic
 
 ```bash
 # Arbeitsverzeichnis erstellen
-mkdir -p fossgis_workshop
+mkdir fossgis_workshop
 cd fossgis_workshop
 
 # Verzeichnis für ORS-Dateien erstellen
