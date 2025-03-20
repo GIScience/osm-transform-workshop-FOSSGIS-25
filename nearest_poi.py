@@ -20,7 +20,7 @@ isochrone_request = requests.post('https://api.openrouteservice.org/v2/isochrone
 
 
 geojson_from_request = isochrone_request.json()
-area = geojson_from_request["features"][0]
+area = geojson_from_request["features"][0]["geometry"]
 ##area = geojson_from_request
 geojson_string = json.dumps(area)
 print("--- GeoJSON string from json.dumps ---")
