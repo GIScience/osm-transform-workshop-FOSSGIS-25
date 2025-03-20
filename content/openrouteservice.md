@@ -22,7 +22,7 @@ cd fossgis_workshop
 Danach erstellen wir einen weiteren Ordner für die Openrouteservice-Dateien:
 
 ```bash
-mkdir -p ors-docker/files
+mkdir -p ors-docker-latest/files
 ```
 
 ### PBF-Datei herunterladen
@@ -31,9 +31,9 @@ Für diese Anleitung werden wir mit zwei PBF-Dateien arbeiten: Münster und Detm
 
 ```bash
 # Münster PBF-Datei herunterladen
-curl -C https://download.geofabrik.de/europe/germany/nordrhein-westfalen/muenster-regbez-latest.osm.pbf -o ors-docker/files/muenster-regbez-latest.osm.pbf
+curl -C - https://download.geofabrik.de/europe/germany/nordrhein-westfalen/muenster-regbez-latest.osm.pbf -o ors-docker-latest/files/muenster-regbez-latest.osm.pbf
 # Detmold PBF-Datei herunterladen
-curl -C https://download.geofabrik.de/europe/germany/nordrhein-westfalen/detmold-regbez-latest.osm.pbf -o ors-docker/files/detmold-regbez-latest.osm.pbf
+curl -C - https://download.geofabrik.de/europe/germany/nordrhein-westfalen/detmold-regbez-latest.osm.pbf -o ors-docker-latest/files/detmold-regbez-latest.osm.pbf
 ```
 
 - The `-C` option allows you to resume a download, if it was interrupted.
@@ -45,11 +45,11 @@ Anschließend erstellen wir eine Basis-Konfigurationsdatei für Openrouteservice
 Konfigurationsparameter können der [Dokumentation](https://giscience.github.io/openrouteservice/run-instance/configuration/) entnommen werden.
 
 ```bash
-echo "ors.engine.profile_default.build.source_file=/home/ors/files/muenster-regbez-latest.osm.pbf" > ors_car_muenster.env
-echo "ors.engine.profiles.driving-car.enabled=true" >> ors_car_muenster.env
+echo "ors.engine.profile_default.build.source_file=/home/ors/files/muenster-regbez-latest.osm.pbf" > ors_car_muenster_latest.env
+echo "ors.engine.profiles.driving-car.enabled=true" >> ors_car_muenster_latest.env
 ```
 
-- Das erste `echo`-Kommando erstellt eine Datei `ors_car_muenster.env` und setzt den Pfad zur PBF-Datei für das Profil `driving-car`.
+- Das erste `echo`-Kommando erstellt eine Datei `ors_car_muenster_latest.env` und setzt den Pfad zur PBF-Datei für das Profil `driving-car`.
 - `ors.engine.profile_default.build.source_file` gibt den Pfad zur PBF-Datei an, die für die Berechnung der Routen verwendet wird.
 - `ors.engine.profiles.driving-car.enabled` aktiviert das Profil für Autofahrer.
 
@@ -63,12 +63,12 @@ docker run -d \
   --name ors-app \
   -u $(id -u):$(id -g) \
   -p 8080:8082 \
-  -v ./ors-docker:/home/ors \
+  -v ./ors-docker-latest:/home/ors \
   -e CONTAINER_LOG_LEVEL=INFO \
   -e REBUILD_GRAPHS=true \
   -e XMS=1g \
   -e XMX=2g \
-  --env-file ors_car_muenster.env \
+  --env-file ors_car_muenster_latest.env \
   openrouteservice/openrouteservice:latest
 
 # Logs überwachen
@@ -139,7 +139,7 @@ docker run -d \
   --name ors-app \
   -u $(id -u):$(id -g) \
   -p 8080:8082 \
-  -v ./ors-docker:/home/ors \
+  -v ./ors-docker-latest:/home/ors \
   -e CONTAINER_LOG_LEVEL=INFO \
   -e XMS=1g \
   -e XMX=2g \
@@ -232,7 +232,7 @@ docker run -d \
   --name ors-app \
   -u $(id -u):$(id -g) \
   -p 8080:8082 \
-  -v ./ors-docker:/home/ors \
+  -v ./ors-docker-latest:/home/ors \
   -e CONTAINER_LOG_LEVEL=INFO \
   -e XMS=1g \
   -e XMX=2g \
@@ -243,9 +243,156 @@ docker run -d \
 docker logs -ft ors-app
 ```
 
-Die Überprüfung der Profile und des `health`-Endpunkts erfolgt analog zu den vorherigen Schritten.
+Die Überprüfung der Profile und des `health`- und `status`-Endpunkts erfolgt analog zu den vorherigen Schritten.
 
-## 5. Openrouteservice-Container mit historischen PBF-Dateien starten
+## 5. Openrouteservice-Container mit historischen PBF-Dateien
+
+**Limitationen**: Um die historischen Daten zu visualisieren, können wir QGIS und das `ORS-Tools`-Plugin verwenden.
+Das `ORS-Tools`-Plugin ermöglicht es, Routen mit Openrouteservice zu berechnen und in QGIS anzuzeigen.
+Die derzeitige Version erlaubt es noch nicht, andere als die Standardprofile zu verwenden (z.B. `car-historic`), aber wir können mit einem Workaround die historischen Daten visualisieren.
+Das Feature wird in einer zukünftigen Version des Plugins verfügbar sein.
+
+### 1. Container Setup mit Münster und Detmold PBF-Dateien
+
+#### Historische PBF-Dateien herunterladen
+
+Im folgenden Abschnitt werden wir einen Openrouteservice-Container mit historischen PBF-Dateien starten.
+
+Zunächst schauen wir uns auf der Geofabrik-Website die verfügbaren PBF-Dateien an: <https://download.geofabrik.de/europe/germany/nordrhein-westfalen/muenster-regbez.html>.
+Dort finden wir unter anderem historische PBF-Dateien, die wir für unsere Zwecke verwenden können.
+
+Um zu der Übersicht mit den historischen PBF-Dateien zu gelangen, klicken wir auf den Link "raw directory index":
+![Historische PBF-Dateien](../img/geofabrik_historic_data_overview.png)
+
+Dort wählen wir die älteste verfügbare PBF-Datei vom 02.01.2014 aus: `muenster-regbez-140101.osm.pbf`.
+![Historische PBF-Datei](../img/geofabrik_historic_data_selection.png)
+
+Nun laden wir die historische PBF-Datei herunter:
+
+```bash
+# Ordnerstruktur für historische und aktuelle Daten erstellen
+mkdir -p ors-docker-historic/files ors-docker-latest/files
+# Aktuelle Münster PBF-Datei herunterladen
+curl -C - https://download.geofabrik.de/europe/germany/nordrhein-westfalen/muenster-regbez-latest.osm.pbf -o ors-docker-latest/files/muenster-regbez-latest.osm.pbf
+# Historische Münster PBF-Datei herunterladen
+curl -C - https://download.geofabrik.de/europe/germany/nordrhein-westfalen/muenster-regbez-140101.osm.pbf -o ors-docker-historic/files/muenster-regbez-140101.osm.pbf
+```
+
+#### Zwei Openrouteservice-Container mit unterschiedlichen PBF-Dateien konfigurieren
+
+Wir erstellen zwei Konfigurationsdateien, die jeweils ein Profile `driving-car` aktivieren, aber unterschiedliche PBF-Dateien verwenden.
+
+```bash
+# Konfiguration mit aktuellem Münster PBF-File
+echo "ors.engine.profiles.driving-car.build.source_file=/home/ors/files/muenster-regbez-latest.osm.pbf" > ors_car_muenster_latest.env
+echo "ors.engine.profiles.driving-car.enabled=true" >> ors_car_muenster_latest.env
+# Konfiguration mit historischem Münster PBF-File
+echo "ors.engine.profiles.driving-car.build.source_file=/home/ors/files/muenster-regbez-140101.osm.pbf" > ors_car_historic_muenster.env
+echo "ors.engine.profiles.driving-car.enabled=true" >> ors_car_historic_muenster.env
+```
+
+#### Zwei Openrouteservice-Container mit unterschiedlichen PBF-Dateien starten
+
+Wir starten zwei Openrouteservice-Container, die jeweils auf Port 8080 (latest osm) und 8081 (historic osm) erreichbar sind und jeweils eine der Konfigurationsdateien verwenden.
+
+```bash
+# Alte Container entfernen
+docker rm -f ors-app || true
+docker rm -f ors-app-historic || true
+
+# Neuen Container mit aktuellem Münster PBF-File starten
+docker run -d \
+  --name ors-app \
+  -u $(id -u):$(id -g) \
+  -p 8080:8082 \
+  -v ./ors-docker-latest:/home/ors \
+  -e CONTAINER_LOG_LEVEL=INFO \
+  -e XMS=1g \
+  -e XMX=2g \
+  -e REBUILD_GRAPHS=true \
+  --env-file ors_car_muenster_latest.env \
+  openrouteservice/openrouteservice:latest
+
+# Neuen Container mit historischem Münster PBF-File starten
+docker run -d \
+  --name ors-app-historic \
+  -u $(id -u):$(id -g) \
+  -p 8081:8082 \
+  -v ./ors-docker-historic:/home/ors \
+  -e CONTAINER_LOG_LEVEL=INFO \
+  -e XMS=1g \
+  -e XMX=2g \
+  -e REBUILD_GRAPHS=true \
+  --env-file ors_car_historic_muenster.env \
+  openrouteservice/openrouteservice:latest
+
+# Logs überwachen
+docker logs -ft ors-app
+docker logs -ft ors-app-historic
+```
+
+#### Zwischenstand
+
+Wir haben nun zwei Openrouteservice-Container gestartet, die jeweils auf Port 8080 und 8081 erreichbar sind und unterschiedliche PBF-Dateien verwenden.
+Wir können nun mit QGIS und dem `ORS-Tolls`-Plugin die historischen Daten visualisieren.
+
+### 2. Visualisierung historischer Daten in QGIS
+
+Wir können nun damit beginnen die historischen und aktuellen Daten in QGIS zu visualisieren und miteinander zu vergleichen.
+
+#### ORS-Tools-Plugin installieren
+
+Zunächst installieren wir das `ORS-Tools`-Plugin in QGIS.
+Dazu öffnen wir QGIS und installieren die Erweiterung:
+
+![ORS-Tools-Plugin installieren](../img/qgis_orstools_plugin_install.png)
+
+#### Lokale Openrouteservice-Instanz konfigurieren
+
+Anschließend konfigurieren wir das `ORS-Tools`-Plugin, um die lokale Openrouteservice-Instanz zu verwenden.
+Dazu öffnen wir die Einstellungen des Plugins und wählen die `Provider`-Option aus.
+![ORS-Tools-Plugin konfigurieren](../img/qgis_settings.png)
+Dort fügen wir eine neue Konfiguration hinzu und geben die URLs der lokalen Openrouteservice-Instanz an.
+
+Zunächst konfigurieren wir die Openrouteservice-Instanz mit dem aktuellen Münster PBF-File:
+Dabei achten wir darauf, dass die URL wie folgt lautet: `http://localhost:8080/ors`.
+![ORS-Tools-Plugin konfigurieren](../img/qgis_latest_provider_settings.png)
+
+Danach konfigurieren wir die Openrouteservice-Instanz mit dem historischen Münster PBF-File.
+Dabei achten wir darauf, dass die URL wie folgt lautet: `http://localhost:8081/ors`.
+![ORS-Tools-Plugin konfigurieren](../img/qgis_oldest_provider_settings.png)
+
+Bei beiden Konfigurationen wird das Feld `API Key` leer gelassen, da wir uns mit eigenen Instanzen nicht authentifizieren müssen.
+
+#### Exportieren und Visualisieren der Routing-Graphen
+
+Wir können nun mit dem `ORS-Tools`-Plugin die lokalen Openrouteservice-Instanzen verwenden.
+Zur besseren Veranschaulichung werden wir die Routing-Graphen exportieren und in QGIS visualisieren.
+
+Zunächst wählen wir in der `Processing Toolbox` -> `Export Network from Map`.
+
+![Export Network from Map](../img/graph_export_toolbox.png)
+
+Dort wählen wir die gewünschte Openrouteservice-Instanz (latest) und das Profil (driving-car) aus, für das wir den Routing-Graphen exportieren möchten.
+
+![Export Network from Map](../img/graph_export_window.png)
+
+Mit der Bestätigung auf `Run` wird der Routing-Graph exportiert und in QGIS geladen.
+
+Dies machen wir auch für die historische Openrouteservice-Instanz, in dem wir die entsprechenden Einstellungen vornehmen und `oldest`als Provder auswählen.
+Mit erneuter Bestätigung auf `Run` wird der "alte" Routing-Graph exportiert und in QGIS geladen.
+
+Durch unterschiedliches Styling ist es nun möglich, die historischen und aktuellen Daten miteinander zu vergleichen.
+
+![Historische und aktuelle Daten in QGIS](../img/graph_export_qgis_styling.png)
+
+## 6. Zusammenfassung
+
+Wir haben in diesem Tutorial gelernt, wie sich Openrouteservice-Container mit unterschiedlichen PBF-Dateien und Profilen starten lassen.
+Dabei haben wir uns auf die Konfiguration von Profilen für Autofahrer und Radfahrer konzentriert.
+Zudem haben wir gelernt, wie historische PBF-Dateien verwendet und mit QGIS visualisiert werden können.
+
+
 
 Grober Plan:
 
