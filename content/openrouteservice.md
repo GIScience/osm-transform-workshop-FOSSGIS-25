@@ -4,60 +4,67 @@
 
 ### Anforderungen
 
-- Docker
-- curl
-- Linux oder macOS
+- **Docker**: Container-Plattform für die ORS-Installation
+- **curl**: Kommandozeilentool für HTTP-Anfragen
+- **Linux oder macOS**: Betriebssysteme mit vollen Docker-Funktionen
+- **Mindestens 4GB RAM**: Für die Grapherstellung empfohlen
 
 ### Arbeitsumgebung einrichten
 
 Wir bereiten nun die Umgebung für den erfolgreichen Start eines Openrouteservice-Containers vor.
 
-Zunächst erstellen wir uns einen neuen Scratch-Ordner:
-
 ```bash
+# Arbeitsverzeichnis erstellen
 mkdir -p fossgis_workshop
 cd fossgis_workshop
-```
 
-Danach erstellen wir einen weiteren Ordner für die Openrouteservice-Dateien:
-
-```bash
+# Verzeichnis für ORS-Dateien erstellen
 mkdir -p ors-docker-latest/files
 ```
 
 ### PBF-Datei herunterladen
 
-Für diese Anleitung werden wir mit zwei PBF-Dateien arbeiten: Münster und Detmold. Es können jederzeit andere PBF-Dateien von Geofabrik heruntergeladen werden: <https://download.geofabrik.de>
+Für den ersten Teil dieser Anleitung arbeiten wir mit zwei PBF-Dateien: Münster und Detmold.
+Es können jederzeit andere PBF-Dateien von Geofabrik heruntergeladen werden: <https://download.geofabrik.de>
 
 ```bash
 # Münster PBF-Datei herunterladen
 curl -C - https://download.geofabrik.de/europe/germany/nordrhein-westfalen/muenster-regbez-latest.osm.pbf -o ors-docker-latest/files/muenster-regbez-latest.osm.pbf
+
 # Detmold PBF-Datei herunterladen
 curl -C - https://download.geofabrik.de/europe/germany/nordrhein-westfalen/detmold-regbez-latest.osm.pbf -o ors-docker-latest/files/detmold-regbez-latest.osm.pbf
 ```
 
-- The `-C` option allows you to resume a download, if it was interrupted.
-- The `-o` option allows you to specify the output file name.
+**Hinweis zu curl-Optionen:**
+
+- `-C -`: Ermöglicht das Fortsetzen eines unterbrochenen Downloads
+- `-o`: Bestimmt den Namen der Ausgabedatei
 
 ## 2. Openrouteservice-Container mit Basis-Konfiguration und Münster PBF-Datei starten
 
-Anschließend erstellen wir eine Basis-Konfigurationsdatei für Openrouteservice.
-Konfigurationsparameter können der [Dokumentation](https://giscience.github.io/openrouteservice/run-instance/configuration/) entnommen werden.
+### Konfigurationsdatei erstellen
+
+Wir erstellen eine Basis-Konfigurationsdatei für Openrouteservice. 
+Weitere Konfigurationsparameter können der [Dokumentation](https://giscience.github.io/openrouteservice/run-instance/configuration/engine/) entnommen werden.
 
 ```bash
+# Konfigurationsdatei für Auto-Routing mit Münster-Daten erstellen
 echo "ors.engine.profile_default.build.source_file=/home/ors/files/muenster-regbez-latest.osm.pbf" > ors_car_muenster_latest.env
 echo "ors.engine.profiles.driving-car.enabled=true" >> ors_car_muenster_latest.env
 ```
 
-- Das erste `echo`-Kommando erstellt eine Datei `ors_car_muenster_latest.env` und setzt den Pfad zur PBF-Datei für das Profil `driving-car`.
-- `ors.engine.profile_default.build.source_file` gibt den Pfad zur PBF-Datei an, die für die Berechnung der Routen verwendet wird.
-- `ors.engine.profiles.driving-car.enabled` aktiviert das Profil für Autofahrer.
+**Wichtige Konfigurationsparameter:**
 
-Mit dem folgenden Befehl wird ein Openrouteservice-Container gestartet, der auf Port 8080 erreichbar ist und die PBF-Datei aus dem aktuellen Verzeichnis verwendet.
+- `ors.engine.profile_default.build.source_file`: Pfad zur PBF-Datei im Container
+- `ors.engine.profiles.driving-car.enabled`: Aktiviert das Profil für Autofahrer
+- Weitere mögliche Profile: `cycling-regular`, `foot-walking`, `wheelchair` etc.
+
+### Container starten
 
 ```bash
-# Alten Container entfernen
+# Alten Container entfernen, falls vorhanden
 docker rm -f ors-app || true
+
 # Neuen Container starten
 docker run -d \
   --name ors-app \
@@ -75,11 +82,25 @@ docker run -d \
 docker logs -ft ors-app
 ```
 
+**Erklärung wichtiger Docker-Parameter:**
+
+- `-d`: Startet den Container im Hintergrund (detached mode)
+- `-u $(id -u):$(id -g)`: Lässt den Container mit den Benutzerrechten des aktuellen Nutzers laufen
+- `-p 8080:8082`: Leitet Port 8082 im Container auf Port 8080 des Hosts weiter
+- `-v ./ors-docker-latest:/home/ors`: Bindet das lokale Verzeichnis im Container ein
+- `-e REBUILD_GRAPHS=true`: Erzwingt Neuerstellung der Routing-Graphen
+- `-e XMS=1g -e XMX=2g`: Setzt minimale und maximale Java-Heap-Größe
+
+### API-Verfügbarkeit prüfen
+
 Nachdem der Container gestartet wurde, kann die API unter `http://localhost:8080/ors` erreicht werden.
-Wir testen nun, ob der `health`-Endpunkt erreichbar ist und den erfolgreichen Start des Containers bestätigt.
 
 ```bash
+# Health-Endpunkt prüfen
 curl http://localhost:8080/ors/v2/health
+
+# Verfügbare Profile überprüfen
+curl http://localhost:8080/ors/v2/status
 ```
 
 Eine erfolgreiche Antwort sollte wie folgt aussehen:
@@ -369,7 +390,7 @@ Bei beiden Konfigurationen wird das Feld `API Key` leer gelassen, da wir uns mit
 Wir können nun mit dem `ORS-Tools`-Plugin die lokalen Openrouteservice-Instanzen verwenden.
 Zur besseren Veranschaulichung werden wir die Routing-Graphen exportieren und in QGIS visualisieren.
 
-Zunächst wählen wir in der `Processing Toolbox` -> `Export Network from Map`.
+Zunächst wählen wir in der `Processing Toolbox` ⇾ `Export Network from Map`.
 
 ![Export Network from Map](../img/graph_export_toolbox.png)
 
@@ -392,12 +413,30 @@ Wir haben in diesem Tutorial gelernt, wie sich Openrouteservice-Container mit un
 Dabei haben wir uns auf die Konfiguration von Profilen für Autofahrer und Radfahrer konzentriert.
 Zudem haben wir gelernt, wie historische PBF-Dateien verwendet und mit QGIS visualisiert werden können.
 
+## 7. Aufräumen und Ressourcen freigeben
 
+Nach Abschluss des Workshops sollten Sie die Docker-Container stoppen und entfernen sowie nicht mehr benötigte Dateien löschen, um Speicherplatz freizugeben.
 
-Grober Plan:
+### Container stoppen und entfernen
 
-1. ~~Set-up ors instance with different pbf files~~
-2. New config capabilities :)
-3. "historic" routing: use old geofabrik pbf instances
+```bash
+# Alle laufenden ORS-Container anzeigen
+docker ps -a | grep ors-app
 
-<!-- Some of this content might go into ors docs -->
+# Container stoppen und entfernen
+docker stop ors-app ors-app-historic
+docker rm ors-app ors-app-historic
+```
+
+### Dateien und Verzeichnisse aufräumen
+
+Die heruntergeladenen PBF-Dateien und erstellten Graphen können je nach Region mehrere Gigabyte Speicherplatz belegen.
+
+```bash
+# Größe der ORS-Verzeichnisse anzeigen
+du -sh ./ors-docker-*
+
+# Optionaler Schritt: Verzeichnisse löschen, wenn nicht mehr benötigt
+rm -rf ./ors-docker-latest ./ors-docker-historic
+rm -f ors_*.env
+```
