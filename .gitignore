@@ -11,6 +11,7 @@
 !notes-workshop-fossgis.md
 !_config.yml
 !_toc.yml
+!docker-compose.yml
 
 # Folder includes
 !_static/

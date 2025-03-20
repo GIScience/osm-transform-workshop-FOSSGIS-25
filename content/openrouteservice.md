@@ -5,21 +5,23 @@
 ### Anforderungen
 
 - **Docker**: Container-Plattform für die ORS-Installation
+- **Docker Compose**: Tool zur einfachen Verwaltung von Docker-Containern
 - **curl**: Kommandozeilentool für HTTP-Anfragen
+- **Git**: Versionskontrollsystem zum Klonen des Workshop-Repositories
 - **Linux oder macOS**: Betriebssysteme mit vollen Docker-Funktionen
 - **Mindestens 4GB RAM**: Für die Grapherstellung empfohlen
 
-### Arbeitsumgebung einrichten
+### Repository klonen
 
-Wir bereiten nun die Umgebung für den erfolgreichen Start eines Openrouteservice-Containers vor.
+Wir beginnen damit, das Workshop-Repository zu klonen, welches alle benötigten Dateien enthält, einschließlich der Docker Compose-Konfiguration.
 
 ```bash
-# Arbeitsverzeichnis erstellen
-mkdir fossgis_workshop
-cd fossgis_workshop
+# Repository klonen
+git clone https://github.com/GIScience/osm-transform-workshop-FOSSGIS-25.git
+cd osm-transform-workshop-FOSSGIS-25
 
-# Verzeichnis für ORS-Dateien erstellen
-mkdir -p ors-docker-latest/files
+# Verzeichnisse für ORS-Dateien erstellen
+mkdir -p ors-docker-latest/files ors-docker-historic/files
 ```
 
 ### PBF-Datei herunterladen
@@ -40,56 +42,70 @@ curl -C - https://download.geofabrik.de/europe/germany/nordrhein-westfalen/detmo
 - `-C -`: Ermöglicht das Fortsetzen eines unterbrochenen Downloads
 - `-o`: Bestimmt den Namen der Ausgabedatei
 
-## 2. Openrouteservice-Container mit Basis-Konfiguration und Münster PBF-Datei starten
+## 2. Docker Compose für Openrouteservice
 
-### Konfigurationsdatei erstellen
+Das geklonte Repository enthält bereits eine vorkonfigurierte `docker-compose.yml` Datei im Hauptverzeichnis. Diese Datei definiert verschiedene Openrouteservice-Container mit unterschiedlichen Konfigurationen:
 
-Wir erstellen eine Basis-Konfigurationsdatei für Openrouteservice. 
-Weitere Konfigurationsparameter können der [Dokumentation](https://giscience.github.io/openrouteservice/run-instance/configuration/engine/) entnommen werden.
+1. `ors-app`: Basis-Konfiguration mit dem Auto-Profil und Münster-Daten
+2. `ors-app-historic`: Container mit historischen Münster-Daten von 2014
+3. `ors-app-multi-profile`: Container mit mehreren Profilen (Auto und Fahrrad)
+4. `ors-app-multi-source`: Container mit unterschiedlichen Datenquellen pro Profil
+
+Sie können den Inhalt der Datei mit einem Texteditor inspizieren:
 
 ```bash
-# Konfigurationsdatei für Auto-Routing mit Münster-Daten erstellen
-echo "ors.engine.profile_default.build.source_file=/home/ors/files/muenster-regbez-latest.osm.pbf" > ors_car_muenster_latest.env
-echo "ors.engine.profiles.driving-car.enabled=true" >> ors_car_muenster_latest.env
+# Docker Compose-Datei anzeigen
+cat docker-compose.yml
 ```
 
-**Wichtige Konfigurationsparameter:**
+## 3. Openrouteservice mit Docker Compose starten
 
-- `ors.engine.profile_default.build.source_file`: Pfad zur PBF-Datei im Container
-- `ors.engine.profiles.driving-car.enabled`: Aktiviert das Profil für Autofahrer
-- Weitere mögliche Profile: `cycling-regular`, `foot-walking`, `wheelchair` etc.
+### Container mit Basis-Konfiguration starten (Auto-Profil mit Münster-Daten)
 
-### Container starten
+Zunächst starten wir den Openrouteservice-Container mit der Basis-Konfiguration, die das Auto-Profil und Münster-Daten verwendet.
+
+Der betreffende Dienst in der `docker-compose.yml` Datei ist `ors-app` und beinhaltet die folgende Konfiguration:
+
+```yaml
+ors-app:
+  image: openrouteservice/openrouteservice:latest
+  container_name: ors-app
+  user: "${UID:-1000}:${GID:-1000}"
+  ports:
+    - "8080:8082"
+  volumes:
+    - ./ors-docker-latest:/home/ors
+  environment:
+    - CONTAINER_LOG_LEVEL=INFO
+    - XMS=1g
+    - XMX=2g 
+    - REBUILD_GRAPHS=true
+    - ORS_ENGINE_PROFILES_DRIVING_CAR_BUILD_SOURCE_FILE=/home/ors/files/muenster-regbez-latest.osm.pbf
+    - ORS_ENGINE_PROFILES_DRIVING_CAR_ENABLED=true
+```
+
+**Hinweis zu der Konfiguration:**
+
+- `image`: Docker-Image für Openrouteservice
+- `container_name`: Name des Containers
+- `user`: Benutzer-ID und Gruppen-ID für den Container. 1000 ist der Standardwert für den ersten Benutzer auf den meisten Systemen und erlaubt den Zugriff auf die gemounteten Dateien des Containers.
+- `ports`: Portweiterleitung von Container-Port 8082 auf Host-Port 8080
+- `volumes`: Mount-Punkt für die Arbeitsumgebung des Containers
+- `environment`: Umgebungsvariablen für den Container, einschließlich der PBF-Datei und des Profils
+  - `REBUILD_GRAPHS`: Erzwingt den Neuaufbau der Routing-Graphen
+  - `ORS_ENGINE_PROFILES_DRIVING_CAR_BUILD_SOURCE_FILE`: Pfad zur Münster PBF-Datei
+  - `ORS_ENGINE_PROFILES_DRIVING_CAR_ENABLED`: Aktiviert das Auto-Profil
+  - `XMS` und `XMX`: Speichergröße für den Container
+  - `CONTAINER_LOG_LEVEL`: Log-Level für den Container
+
 
 ```bash
-# Alten Container entfernen, falls vorhanden
-docker rm -f ors-app || true
-
-# Neuen Container starten
-docker run -d \
-  --name ors-app \
-  -u $(id -u):$(id -g) \
-  -p 8080:8082 \
-  -v ./ors-docker-latest:/home/ors \
-  -e CONTAINER_LOG_LEVEL=INFO \
-  -e REBUILD_GRAPHS=true \
-  -e XMS=1g \
-  -e XMX=2g \
-  --env-file ors_car_muenster_latest.env \
-  openrouteservice/openrouteservice:latest
+# Container starten
+docker-compose up -d ors-app
 
 # Logs überwachen
-docker logs -ft ors-app
+docker-compose logs -f ors-app
 ```
-
-**Erklärung wichtiger Docker-Parameter:**
-
-- `-d`: Startet den Container im Hintergrund (detached mode)
-- `-u $(id -u):$(id -g)`: Lässt den Container mit den Benutzerrechten des aktuellen Nutzers laufen
-- `-p 8080:8082`: Leitet Port 8082 im Container auf Port 8080 des Hosts weiter
-- `-v ./ors-docker-latest:/home/ors`: Bindet das lokale Verzeichnis im Container ein
-- `-e REBUILD_GRAPHS=true`: Erzwingt Neuerstellung der Routing-Graphen
-- `-e XMS=1g -e XMX=2g`: Setzt minimale und maximale Java-Heap-Größe
 
 ### API-Verfügbarkeit prüfen
 
@@ -103,177 +119,105 @@ curl http://localhost:8080/ors/v2/health
 curl http://localhost:8080/ors/v2/status
 ```
 
-Eine erfolgreiche Antwort sollte wie folgt aussehen:
+## 4. Openrouteservice mit mehreren Profilen
 
-```json
-{"status":"ready"}
+Um den Openrouteservice mit mehreren Profilen zu starten, bearbeiten Sie die `docker-compose.yml` Datei und entfernen Sie die Kommentarzeichen vor dem `ors-app-multi-profile`-Service.
+Dieser Service beinhaltet die folgende Konfiguration:
+
+```yaml
+ors-app-multi-profile:
+  image: openrouteservice/openrouteservice:latest
+  container_name: ors-app-multi-profile
+  user: "${UID:-1000}:${GID:-1000}"
+  ports:
+    - "8081:8082"
+  volumes:
+    - ./ors-docker-latest:/home/ors
+  environment:
+    - CONTAINER_LOG_LEVEL=INFO
+    - XMS=1g
+    - XMX=2g
+    - REBUILD_GRAPHS=true
+    - ORS_ENGINE_PROFILE_DEFAULT_BUILD_SOURCE_FILE=/home/ors/files/muenster-regbez-latest.osm.pbf
+    - ORS_ENGINE_PROFILES_DRIVING_CAR_ENABLED=true
+    - ORS_ENGINE_PROFILES_CYCLING_REGULAR_ENABLED=true
 ```
 
-Wir überprüfen nun ebenfalls die verfügbaren Profile:
+**Hinweis zu der Konfiguration:**
+Siehe vorherigen Abschnitt für die generellen Informationen zur Konfiguration.
+
+- `ORS_ENGINE_PROFILE_DEFAULT_BUILD_SOURCE_FILE`: Pfad zur Münster PBF-Datei
+- `ORS_ENGINE_PROFILES_DRIVING_CAR_ENABLED`: Aktiviert das Auto-Profil
+- `ORS_ENGINE_PROFILES_CYCLING_REGULAR_ENABLED`: Aktiviert das Fahrrad-Profil
 
 ```bash
-curl http://localhost:8080/ors/v2/status
-```
+# Bearbeiten Sie die docker-compose.yml und aktivieren Sie den multi-profile Service
+# Stoppen Sie bestehende Services
+docker-compose down
 
-Eine erfolgreiche Antwort sollte diverse Informationen über die konfigurierte Instanz enthalten, darunter auch die verfügbaren Profile:
+# Starten Sie den Service mit mehreren Profilen
+docker-compose up -d ors-app-multi-profile
 
-```json
-"profiles": {
-    "driving-car": {
-      "storages": {},
-      "encoder_name": "driving-car",
-      "encoded_values": [],
-      "graph_build_date": "2025-03-19T17:10:29Z",
-      "osm_date": "2025-03-18T21:21:15Z",
-      "limits": {
-        "maximum_distance": 100000,
-        "maximum_waypoints": 50,
-        "maximum_distance_dynamic_weights": 100000,
-        "maximum_distance_avoid_areas": 100000
-      }
-    }
-  }
-```
-
-## 3. Openrouteservice-Container mit zwei Profilen und Münster PBF-Datei starten
-
-Nun erstellen wir eine Konfigurationsdatei, die zwei Profile aktiviert: `driving-car` und `cycling-regular`.
-
-```bash
-echo "ors.engine.profile_default.build.source_file=/home/ors/files/muenster-regbez-latest.osm.pbf" > ors_car_cycling_muenster.env
-echo "ors.engine.profiles.driving-car.enabled=true" >> ors_car_cycling_muenster.env
-echo "ors.engine.profiles.cycling-regular.enabled=true" >> ors_car_cycling_muenster.env
-```
-
-- Das erste `echo`-Kommando erstellt eine Datei `ors_car_cycling_muenster.env` und setzt den Pfad zur PBF-Datei für die Profile `driving-car` und `cycling-regular`.
-- `ors.engine.profile_default.build.source_file` gibt den Pfad zur PBF-Datei an, die für die Berechnung der Routen verwendet wird.
-- `ors.engine.profiles.driving-car.enabled` aktiviert das Profil für Autofahrer.
-- `ors.engine.profiles.cycling-regular.enabled` aktiviert das Profil für Radfahrer.
-
-Mit dem folgenden Befehl wird ein Openrouteservice-Container gestartet, der auf Port 8081 erreichbar ist und die PBF-Datei aus dem aktuellen Verzeichnis verwendet.
-
-```bash
-# Alten Container entfernen
-docker rm -f ors-app || true
-# Neuen Container starten
-docker run -d \
-  --name ors-app \
-  -u $(id -u):$(id -g) \
-  -p 8080:8082 \
-  -v ./ors-docker-latest:/home/ors \
-  -e CONTAINER_LOG_LEVEL=INFO \
-  -e XMS=1g \
-  -e XMX=2g \
-  -e REBUILD_GRAPHS=true \
-  --env-file ors_car_cycling_muenster.env \
-  openrouteservice/openrouteservice:latest
 # Logs überwachen
-docker logs -ft ors-app
+docker-compose logs -f ors-app-multi-profile
 ```
 
-Nachdem der Container gestartet wurde, kann die API unter `http://localhost:8080/ors` erreicht werden.
-Wir testen jetzt, ob der `health`-Endpunkt erreichbar ist und den erfolgreichen Start des Containers bestätigt.
+Die API ist unter `http://localhost:8081/ors` erreichbar und kann über die selben `health`- und `status`-Endpunkte wie zuvor überprüft werden.
+
+## 5. Openrouteservice mit unterschiedlichen PBF-Dateien pro Profil (Münster und Detmold)
+
+Um den Openrouteservice mit unterschiedlichen PBF-Dateien pro Profil zu starten, aktivieren Sie den `ors-app-multi-source`-Service in der `docker-compose.yml`.
+Dieser Service beinhaltet die folgende Konfiguration:
+
+```yaml
+ors-app-multi-source:
+  image: openrouteservice/openrouteservice:latest
+  container_name: ors-app-multi-source
+  user: "${UID:-1000}:${GID:-1000}"
+  ports:
+    - "8082:8082"
+  volumes:
+    - ./ors-docker-latest:/home/ors
+  environment:
+    - CONTAINER_LOG_LEVEL=INFO
+    - XMS=1g
+    - XMX=2g
+    - REBUILD_GRAPHS=true
+    - ORS_ENGINE_PROFILE_DEFAULT_BUILD_SOURCE_FILE=/home/ors/files/muenster-regbez-latest.osm.pbf
+    - ORS_ENGINE_PROFILES_DRIVING_CAR_ENABLED=true
+    - ORS_ENGINE_PROFILES_CYCLING_REGULAR_ENABLED=true
+    - ORS_ENGINE_PROFILES_CYCLING_REGULAR_BUILD_SOURCE_FILE=/home/ors/files/detmold-regbez-latest.osm.pbf
+```
+
+**Hinweis zu der Konfiguration:**
+Siehe vorherigen Abschnitt für die generellen Informationen zur Konfiguration.
+
+- `ORS_ENGINE_PROFILE_DEFAULT_BUILD_SOURCE_FILE`: Pfad zur Münster PBF-Datei
+- `ORS_ENGINE_PROFILES_DRIVING_CAR_ENABLED`: Aktiviert das Auto-Profil
+- `ORS_ENGINE_PROFILES_CYCLING_REGULAR_ENABLED`: Aktiviert das Fahrrad-Profil
+- `ORS_ENGINE_PROFILES_CYCLING_REGULAR_BUILD_SOURCE_FILE`: Pfad zur Detmold PBF-Datei
 
 ```bash
-curl http://localhost:8080/ors/v2/health
-```
+# Bearbeiten Sie die docker-compose.yml und aktivieren Sie den multi-source Service
+# Stoppen Sie bestehende Services
+docker-compose down
 
-Eine erfolgreiche Antwort sollte wie folgt aussehen:
+# Starten Sie den Service mit unterschiedlichen Datenquellen pro Profil
+docker-compose up -d ors-app-multi-source
 
-```json
-{"status":"ready"}
-```
-
-Wir überprüfen nun ebenfalls die verfügbaren Profile:
-
-```bash
-curl http://localhost:8080/ors/v2/status
-```
-
-Eine erfolgreiche Antwort sollte diverse Informationen über die konfigurierte Instanz enthalten, darunter auch die verfügbaren Profile:
-
-```json
-"profiles": {
-    "driving-car": {
-      "storages": {},
-      "encoder_name": "driving-car",
-      "encoded_values": [],
-      "graph_build_date": "2025-03-19T17:10:29Z",
-      "osm_date": "2025-03-18T21:21:15Z",
-      "limits": {
-        "maximum_distance": 100000,
-        "maximum_waypoints": 50,
-        "maximum_distance_dynamic_weights": 100000,
-        "maximum_distance_avoid_areas": 100000
-      }
-    },
-    "cycling-regular": {
-      "storages": { },
-      "encoder_name": "cycling-regular",
-      "encoded_values": [ ],
-      "graph_build_date": "2025-03-19T17:11:10Z",
-      "osm_date": "2025-03-18T21:21:15Z",
-      "limits": {
-        "maximum_distance": 100000,
-        "maximum_waypoints": 50,
-        "maximum_distance_dynamic_weights": 100000,
-        "maximum_distance_avoid_areas": 100000
-      }
-    }
-  }
-```
-
-## 4. Openrouteservice-Container mit zwei Profilen und unterschiedlichen PBF-Dateien starten
-
-Nun erstellen wir eine Konfigurationsdatei, die zwei Profile aktiviert: `driving-car` und `cycling-regular` und unterschiedliche PBF-Dateien verwendet.
-
-```bash
-echo "ors.engine.profile_default.build.source_file=/home/ors/files/muenster-regbez-latest.osm.pbf" > ors_car_cycling_muenster_detmold.env
-echo "ors.engine.profiles.driving-car.enabled=true" >> ors_car_cycling_muenster_detmold.env
-echo "ors.engine.profiles.cycling-regular.enabled=true" >> ors_car_cycling_muenster_detmold.env
-echo "ors.engine.profiles.cycling-regular.build.source_file=/home/ors/files/detmold-regbez-latest.osm.pbf" >> ors_car_cycling_muenster_detmold.env
-```
-
-- Das erste `echo`-Kommando erstellt eine Datei `ors_car_cycling_muenster.env` und setzt den Pfad zur PBF-Datei für die Profile `driving-car` und `cycling-regular`.
-- `ors.engine.profile_default.build.source_file` gibt den Pfad zur PBF-Datei an, die für die Berechnung der Routen verwendet wird.
-- `ors.engine.profiles.driving-car.enabled` aktiviert das Profil für Autofahrer.
-- `ors.engine.profiles.cycling-regular.enabled` aktiviert das Profil für Radfahrer.
-- `ors.engine.profiles.cycling-regular.build.source_file` gibt den Pfad zur PBF-Datei an, die für die Berechnung der Routen für das Profil `cycling-regular` verwendet wird.
-
-Wichtig zu beachten ist, das erste Profil übernimmt die Standard-PBF-Datei, die für alle Profile verwendet wird und über `ors.engine.profile_default.build.source_file` definiert wird.
-Das `cyclin-regular`-Profil verwendet eine eigene PBF-Datei, die über `ors.engine.profiles.cycling-regular.build.source_file` definiert wird. Diese überschreibt die `profile_default`-Konfiguration.
-
-Mit dem folgenden Befehl wird ein Openrouteservice-Container gestartet, der auf Port 8081 erreichbar ist und die PBF-Datei aus dem aktuellen Verzeichnis verwendet.
-
-```bash
-# Alten Container entfernen
-docker rm -f ors-app || true
-# Neuen Container starten
-docker run -d \
-  --name ors-app \
-  -u $(id -u):$(id -g) \
-  -p 8080:8082 \
-  -v ./ors-docker-latest:/home/ors \
-  -e CONTAINER_LOG_LEVEL=INFO \
-  -e XMS=1g \
-  -e XMX=2g \
-  -e REBUILD_GRAPHS=true \
-  --env-file ors_car_cycling_muenster_detmold.env \
-  openrouteservice/openrouteservice:latest
 # Logs überwachen
-docker logs -ft ors-app
+docker-compose logs -f ors-app-multi-source
 ```
 
-Die Überprüfung der Profile und des `health`- und `status`-Endpunkts erfolgt analog zu den vorherigen Schritten.
+Die API ist dann unter `http://localhost:8082/ors` für beide Profile erreichbar und kann über die selben `health`- und `status`-Endpunkte wie zuvor überprüft werden.
 
-## 5. Openrouteservice-Container mit historischen PBF-Dateien
+## 6. Openrouteservice mit historischen PBF-Dateien
 
 **Limitationen**: Um die historischen Daten zu visualisieren, können wir QGIS und das `ORS-Tools`-Plugin verwenden.
-Das `ORS-Tools`-Plugin ermöglicht es, Routen mit Openrouteservice zu berechnen und in QGIS anzuzeigen.
+Das `ORS-Tools`-Plugin ermöglicht es, die Funktionalitäten von Openrouteservice in QGIS zu nutzen und zu verarbeiten.
 Die derzeitige Version erlaubt es noch nicht, andere als die Standardprofile zu verwenden (z.B. `car-historic`), aber wir können mit einem Workaround die historischen Daten visualisieren.
-Das Feature wird in einer zukünftigen Version des Plugins verfügbar sein.
 
-### 1. Container Setup mit Münster und Detmold PBF-Dateien
+### 1. Container Setup mit Münster und historischem Münster PBF-Dateien
 
 #### Historische PBF-Dateien herunterladen
 
@@ -282,84 +226,90 @@ Im folgenden Abschnitt werden wir einen Openrouteservice-Container mit historisc
 Zunächst schauen wir uns auf der Geofabrik-Website die verfügbaren PBF-Dateien an: <https://download.geofabrik.de/europe/germany/nordrhein-westfalen/muenster-regbez.html>.
 Dort finden wir unter anderem historische PBF-Dateien, die wir für unsere Zwecke verwenden können.
 
-Um zu der Übersicht mit den historischen PBF-Dateien zu gelangen, klicken wir auf den Link "raw directory index":
-![Historische PBF-Dateien](../img/geofabrik_historic_data_overview.png)
+Um zu der Übersicht mit den historischen PBF-Dateien zu gelangen, klicken wir auf den Link "raw directory index".
 
 Dort wählen wir die älteste verfügbare PBF-Datei vom 02.01.2014 aus: `muenster-regbez-140101.osm.pbf`.
 ![Historische PBF-Datei](../img/geofabrik_historic_data_selection.png)
 
-Nun laden wir die historische PBF-Datei herunter:
-
 ```bash
-# Ordnerstruktur für historische und aktuelle Daten erstellen
-mkdir -p ors-docker-historic/files ors-docker-latest/files
-# Aktuelle Münster PBF-Datei herunterladen
-curl -C - https://download.geofabrik.de/europe/germany/nordrhein-westfalen/muenster-regbez-latest.osm.pbf -o ors-docker-latest/files/muenster-regbez-latest.osm.pbf
+# Ordnerstruktur für historische Daten erstellen
+mkdir -p ors-docker-historic/files
+
 # Historische Münster PBF-Datei herunterladen
 curl -C - https://download.geofabrik.de/europe/germany/nordrhein-westfalen/muenster-regbez-140101.osm.pbf -o ors-docker-historic/files/muenster-regbez-140101.osm.pbf
 ```
 
-#### Zwei Openrouteservice-Container mit unterschiedlichen PBF-Dateien konfigurieren
+#### Starten der beiden Openrouteservice-Container
 
-Wir erstellen zwei Konfigurationsdateien, die jeweils ein Profile `driving-car` aktivieren, aber unterschiedliche PBF-Dateien verwenden.
+Mit Docker Compose können wir zwei Container gleichzeitig starten - einen mit aktuellen und einen mit historischen Daten.
+Dafür müssen wir die `docker-compose.yml` Datei anpassen und die entsprechenden Dienste `ors-app` und `ors-app-historic` einkommentiert werden.
 
-```bash
-# Konfiguration mit aktuellem Münster PBF-File
-echo "ors.engine.profiles.driving-car.build.source_file=/home/ors/files/muenster-regbez-latest.osm.pbf" > ors_car_muenster_latest.env
-echo "ors.engine.profiles.driving-car.enabled=true" >> ors_car_muenster_latest.env
-# Konfiguration mit historischem Münster PBF-File
-echo "ors.engine.profiles.driving-car.build.source_file=/home/ors/files/muenster-regbez-140101.osm.pbf" > ors_car_historic_muenster.env
-echo "ors.engine.profiles.driving-car.enabled=true" >> ors_car_historic_muenster.env
+Der Inhalt der Datei sollte wie folgt aussehen:
+
+```yaml
+ors-app:
+  image: openrouteservice/openrouteservice:latest
+  container_name: ors-app
+  user: "${UID:-1000}:${GID:-1000}"
+  ports:
+    - "8080:8082"
+  volumes:
+    - ./ors-docker-latest:/home/ors
+  environment:
+    - CONTAINER_LOG_LEVEL=INFO
+    - XMS=1g
+    - XMX=2g 
+    - REBUILD_GRAPHS=true
+    - ORS_ENGINE_PROFILES_DRIVING_CAR_BUILD_SOURCE_FILE=/home/ors/files/muenster-regbez-latest.osm.pbf
+    - ORS_ENGINE_PROFILES_DRIVING_CAR_ENABLED=true
+
+ors-app-historic:
+  image: openrouteservice/openrouteservice:latest
+  container_name: ors-app-historic
+  user: "${UID:-1000}:${GID:-1000}"
+  ports:
+    - "8083:8082"
+  volumes:
+    - ./ors-docker-historic:/home/ors
+  environment:
+    - CONTAINER_LOG_LEVEL=INFO
+    - XMS=1g
+    - XMX=2g
+    - REBUILD_GRAPHS=true
+    - ORS_ENGINE_PROFILES_DRIVING_CAR_BUILD_SOURCE_FILE=/home/ors/files/muenster-regbez-140101.osm.pbf
+    - ORS_ENGINE_PROFILES_DRIVING_CAR_ENABLED=true
 ```
 
-#### Zwei Openrouteservice-Container mit unterschiedlichen PBF-Dateien starten
-
-Wir starten zwei Openrouteservice-Container, die jeweils auf Port 8080 (latest osm) und 8081 (historic osm) erreichbar sind und jeweils eine der Konfigurationsdateien verwenden.
+**Hinweis zu der Konfiguration:**
+Die Konfiguration ist im Wesentlichen die gleiche wie zuvor, mit dem Unterschied, dass wir einen zweiten Container mit historischen Daten starten.
 
 ```bash
-# Alte Container entfernen
-docker rm -f ors-app || true
-docker rm -f ors-app-historic || true
-
-# Neuen Container mit aktuellem Münster PBF-File starten
-docker run -d \
-  --name ors-app \
-  -u $(id -u):$(id -g) \
-  -p 8080:8082 \
-  -v ./ors-docker-latest:/home/ors \
-  -e CONTAINER_LOG_LEVEL=INFO \
-  -e XMS=1g \
-  -e XMX=2g \
-  -e REBUILD_GRAPHS=true \
-  --env-file ors_car_muenster_latest.env \
-  openrouteservice/openrouteservice:latest
-
-# Neuen Container mit historischem Münster PBF-File starten
-docker run -d \
-  --name ors-app-historic \
-  -u $(id -u):$(id -g) \
-  -p 8081:8082 \
-  -v ./ors-docker-historic:/home/ors \
-  -e CONTAINER_LOG_LEVEL=INFO \
-  -e XMS=1g \
-  -e XMX=2g \
-  -e REBUILD_GRAPHS=true \
-  --env-file ors_car_historic_muenster.env \
-  openrouteservice/openrouteservice:latest
+# Services starten
+docker-compose up -d ors-app ors-app-historic
 
 # Logs überwachen
-docker logs -ft ors-app
-docker logs -ft ors-app-historic
+docker-compose logs -f
 ```
 
-#### Zwischenstand
+Die Services sind unter folgenden URLs erreichbar:
 
-Wir haben nun zwei Openrouteservice-Container gestartet, die jeweils auf Port 8080 und 8081 erreichbar sind und unterschiedliche PBF-Dateien verwenden.
-Wir können nun mit QGIS und dem `ORS-Tolls`-Plugin die historischen Daten visualisieren.
+- Aktuelle Daten: `http://localhost:8080/ors`
+- Historische Daten: `http://localhost:8083/ors`
+
+Nun können wir die Verfügbarkeit prüfen:
+
+```bash
+# Aktuelle API prüfen
+curl http://localhost:8080/ors/v2/health
+
+# Historische API prüfen
+curl http://localhost:8083/ors/v2/health
+```
 
 ### 2. Visualisierung historischer Daten in QGIS
 
-Wir können nun damit beginnen die historischen und aktuellen Daten in QGIS zu visualisieren und miteinander zu vergleichen.
+Wir haben zwei Openrouteservice-Container gestartet, die jeweils auf Port 8080 und 8083 erreichbar sind und unterschiedliche PBF-Dateien verwenden.
+Nun können wir damit beginnen die historischen und aktuellen Daten in QGIS zu visualisieren und miteinander zu vergleichen.
 
 #### ORS-Tools-Plugin installieren
 
@@ -380,7 +330,7 @@ Dabei achten wir darauf, dass die URL wie folgt lautet: `http://localhost:8080/o
 ![ORS-Tools-Plugin konfigurieren](../img/qgis_latest_provider_settings.png)
 
 Danach konfigurieren wir die Openrouteservice-Instanz mit dem historischen Münster PBF-File.
-Dabei achten wir darauf, dass die URL wie folgt lautet: `http://localhost:8081/ors`.
+Dabei achten wir darauf, dass die URL wie folgt lautet: `http://localhost:8083/ors`.
 ![ORS-Tools-Plugin konfigurieren](../img/qgis_oldest_provider_settings.png)
 
 Bei beiden Konfigurationen wird das Feld `API Key` leer gelassen, da wir uns mit eigenen Instanzen nicht authentifizieren müssen.
@@ -400,18 +350,12 @@ Dort wählen wir die gewünschte Openrouteservice-Instanz (latest) und das Profi
 
 Mit der Bestätigung auf `Run` wird der Routing-Graph exportiert und in QGIS geladen.
 
-Dies machen wir auch für die historische Openrouteservice-Instanz, in dem wir die entsprechenden Einstellungen vornehmen und `oldest`als Provder auswählen.
+Dies machen wir auch für die historische Openrouteservice-Instanz, in dem wir die entsprechenden Einstellungen vornehmen und `oldest` als Provider auswählen.
 Mit erneuter Bestätigung auf `Run` wird der "alte" Routing-Graph exportiert und in QGIS geladen.
 
 Durch unterschiedliches Styling ist es nun möglich, die historischen und aktuellen Daten miteinander zu vergleichen.
 
 ![Historische und aktuelle Daten in QGIS](../img/graph_export_qgis_styling.png)
-
-## 6. Zusammenfassung
-
-Wir haben in diesem Tutorial gelernt, wie sich Openrouteservice-Container mit unterschiedlichen PBF-Dateien und Profilen starten lassen.
-Dabei haben wir uns auf die Konfiguration von Profilen für Autofahrer und Radfahrer konzentriert.
-Zudem haben wir gelernt, wie historische PBF-Dateien verwendet und mit QGIS visualisiert werden können.
 
 ## 7. Aufräumen und Ressourcen freigeben
 
@@ -420,12 +364,11 @@ Nach Abschluss des Workshops sollten Sie die Docker-Container stoppen und entfer
 ### Container stoppen und entfernen
 
 ```bash
-# Alle laufenden ORS-Container anzeigen
-docker ps -a | grep ors-app
+# Alle Container stoppen und entfernen
+docker-compose down
 
-# Container stoppen und entfernen
-docker stop ors-app ors-app-historic
-docker rm ors-app ors-app-historic
+# Überprüfen, ob Container entfernt wurden
+docker ps -a | grep ors-app
 ```
 
 ### Dateien und Verzeichnisse aufräumen
@@ -438,5 +381,12 @@ du -sh ./ors-docker-*
 
 # Optionaler Schritt: Verzeichnisse löschen, wenn nicht mehr benötigt
 rm -rf ./ors-docker-latest ./ors-docker-historic
-rm -f ors_*.env
+rm -f docker-compose.yml
 ```
+
+## 8. Zusammenfassung
+
+Wir haben in diesem Tutorial gelernt, wie sich Openrouteservice-Container mit unterschiedlichen PBF-Dateien und Profilen starten lassen.
+Dabei haben wir uns auf die Konfiguration von Profilen für Autofahrer und Radfahrer konzentriert.
+Zudem haben wir gelernt, wie historische PBF-Dateien verwendet und mit QGIS visualisiert werden können.
+Zum wurde gezeigt, wie die Docker-Container aufgeräumt und nicht mehr benötigte Dateien gelöscht werden können.

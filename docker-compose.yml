@@ -1,0 +1,75 @@
+
+services:
+  # Basic ORS service with car profile and Münster data
+  ors-app:
+    image: openrouteservice/openrouteservice:latest
+    container_name: ors-app
+    user: "${UID:-1000}:${GID:-1000}"
+    ports:
+      - "8080:8082"
+    volumes:
+      - ./ors-docker-latest:/home/ors
+    environment:
+      - CONTAINER_LOG_LEVEL=INFO
+      - XMS=1g
+      - XMX=2g 
+      - REBUILD_GRAPHS=true
+      - ORS_ENGINE_PROFILES_DRIVING_CAR_BUILD_SOURCE_FILE=/home/ors/files/muenster-regbez-latest.osm.pbf
+      - ORS_ENGINE_PROFILES_DRIVING_CAR_ENABLED=true
+
+  # ORS with multiple profiles (car + cycling)
+  # Uncomment to use this configuration
+  # ors-app-multi-profile:
+  #   image: openrouteservice/openrouteservice:latest
+  #   container_name: ors-app-multi-profile
+  #   user: "${UID:-1000}:${GID:-1000}"
+  #   ports:
+  #     - "8081:8082"
+  #   volumes:
+  #     - ./ors-docker-latest:/home/ors
+  #   environment:
+  #     - CONTAINER_LOG_LEVEL=INFO
+  #     - XMS=1g
+  #     - XMX=2g
+  #     - REBUILD_GRAPHS=true
+  #     - ORS_ENGINE_PROFILE_DEFAULT_BUILD_SOURCE_FILE=/home/ors/files/muenster-regbez-latest.osm.pbf
+  #     - ORS_ENGINE_PROFILES_DRIVING_CAR_ENABLED=true
+  #     - ORS_ENGINE_PROFILES_CYCLING_REGULAR_ENABLED=true
+
+  # ORS with different data sources per profile
+  # Uncomment to use this configuration
+  # ors-app-multi-source:
+  #   image: openrouteservice/openrouteservice:latest
+  #   container_name: ors-app-multi-source
+  #   user: "${UID:-1000}:${GID:-1000}"
+  #   ports:
+  #     - "8082:8082"
+  #   volumes:
+  #     - ./ors-docker-latest:/home/ors
+  #   environment:
+  #     - CONTAINER_LOG_LEVEL=INFO
+  #     - XMS=1g
+  #     - XMX=2g
+  #     - REBUILD_GRAPHS=true
+  #     - ORS_ENGINE_PROFILE_DEFAULT_BUILD_SOURCE_FILE=/home/ors/files/muenster-regbez-latest.osm.pbf
+  #     - ORS_ENGINE_PROFILES_DRIVING_CAR_ENABLED=true
+  #     - ORS_ENGINE_PROFILES_CYCLING_REGULAR_ENABLED=true
+  #     - ORS_ENGINE_PROFILES_CYCLING_REGULAR_BUILD_SOURCE_FILE=/home/ors/files/detmold-regbez-latest.osm.pbf
+
+  # Historic ORS service using 2014 Münster data
+  # ors-app-historic:
+  #   image: openrouteservice/openrouteservice:latest
+  #   container_name: ors-app-historic
+  #   user: "${UID:-1000}:${GID:-1000}"
+  #   ports:
+  #     - "8083:8082"
+  #   volumes:
+  #     - ./ors-docker-historic:/home/ors
+  #   environment:
+  #     - CONTAINER_LOG_LEVEL=INFO
+  #     - XMS=1g
+  #     - XMX=2g
+  #     - REBUILD_GRAPHS=true
+  #     - ORS_ENGINE_PROFILES_DRIVING_CAR_BUILD_SOURCE_FILE=/home/ors/files/muenster-regbez-140101.osm.pbf
+  #     - ORS_ENGINE_PROFILES_DRIVING_CAR_ENABLED=true
+
