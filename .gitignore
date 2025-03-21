@@ -5,11 +5,20 @@
 !.gitignore
 !LICENSE
 !README.md
+
+# Project specific file includes
 !intro.md
 !notes-workshop-fossgis.md
-# gh-pages includes
+!_config.yml
+!_toc.yml
+!docker-compose.yml
+
+# Folder includes
 !_static/
 !content/
 !img/
-!_config.yml
-!_toc.yml
+
+# Wildcard includes
+!content/*
+!_static/*
+!img/*
