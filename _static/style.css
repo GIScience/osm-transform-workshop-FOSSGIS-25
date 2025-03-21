@@ -13,9 +13,9 @@
 
 .footer-logo {
     margin-right: 20px;
-    height: 50px;
+    height: 5em;
     background-color: #FFFFFF;
-    padding: 10px;
+    float: right;
 }
 
 .float-left {
