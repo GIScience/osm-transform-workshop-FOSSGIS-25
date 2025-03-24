@@ -40,6 +40,3 @@ parse:
     - html_image
 
 exclude_patterns: [.venv/*, README.md]
-
-execute:
-  execute_notebooks: force
