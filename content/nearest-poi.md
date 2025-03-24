@@ -54,7 +54,8 @@ Als nächstes kann der `/isochrones`-Endpunkt genutzt werden, um den Bereich zu 
 :tags: [mytag]
 
 # openrouteservice uses [lon, lat]
-startpoint = [7.61282,51.96363]
+startpoint = [7.61282,51.96363] # [lon, lat]
+startpoint_reverse = startpoint[::-1] # [lat, lon] for folium
 
 body = {"locations":[startpoint],"range":[900]}
 
@@ -63,8 +64,7 @@ isochrone_response = requests.post('https://api.openrouteservice.org/v2/isochron
 isochrone_geojson = isochrone_response.json()
 
 # folium uses [lat, lon]
-startpoint.reverse()
-m = folium.Map(startpoint, zoom_start=14)
+m = folium.Map(startpoint_reverse, zoom_start=14)
 
 folium.GeoJson(isochrone_geojson).add_to(m)
 
@@ -85,13 +85,13 @@ body = {"request":"pois","geometry":{"geojson":geojson},"filters":{"category_ids
 poi_response = requests.post('https://api.openrouteservice.org/pois', json=body, headers=headers)
 poi_geojson = poi_response.json()
 
-m = folium.Map(startpoint, zoom_start=14)
+m = folium.Map(startpoint_reverse, zoom_start=14)
 folium.GeoJson(poi_geojson).add_to(m)
 
 m
 ```
 
-Als nächstes muss hieraus der nächste POI extrahiert werden. Dafür wird der `/matrix`-Endpunkt genutzt.
+Als Nächstes muss hieraus der nächste POI extrahiert werden. Dafür wird der `/matrix`-Endpunkt genutzt.
 Hierbei werden die POI-Koordinaten als `destination`, der Startpunkt als `source` übergeben.
 Dadurch ist das Ergebnis einfach verarbeitbar.
 
@@ -108,7 +108,6 @@ for feature in poi_geojson["features"]:
 destinations = list(range(len(pois)))
 sources = [len(pois)]
 
-startpoint.reverse()
 pois.append(startpoint)
 
 # now we have the POIs and can make a neat matrix call
@@ -127,13 +126,12 @@ durations = matrix_json["durations"][0]
 nearest_duration = min(durations)
 nearest_index = durations.index(nearest_duration)
 
+# The last element in the list is the startpoint.
 nearest_poi = pois[nearest_index]
+nearest_poi_reverse = nearest_poi[::-1]
 nearest_poi_info = pois_info[nearest_index]
-nearest_poi.reverse()
-
-m = folium.Map(startpoint, zoom_start=14)
-folium.map.Marker(location=nearest_poi).add_to(m)
-
+m = folium.Map(startpoint_reverse, zoom_start=14)
+folium.map.Marker(location=nearest_poi_reverse).add_to(m)
 m
 
 ```
@@ -146,6 +144,12 @@ body = {"coordinates":[startpoint,nearest_poi]}
 
 directions_response = requests.post('https://api.openrouteservice.org/v2/directions/foot-walking/geojson', json=body, headers=headers)
 directions_geojson = directions_response.json()
+print("startpoint", startpoint)
+print("nearest_poi", nearest_poi)
+print("Directions Response", directions_geojson)
+m = folium.Map(startpoint_reverse, zoom_start=14)
+folium.map.Marker(location=nearest_poi_reverse).add_to(m)
+folium.map.Marker(location=startpoint_reverse).add_to(m)
 
 folium.GeoJson(directions_geojson).add_to(m)
 m
