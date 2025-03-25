@@ -71,7 +71,7 @@ docker run --rm \
 - Die Ausgabe enthält Zusammenfassung der Verarbeitungsschritte und eine Erfolgsmeldung.
 - `ls -lh ./osm-transform/**/*.pbf` zeigt die Größe der PBF-Dateien an. Gut, um diese vor und nach der Verarbeitung zu vergleichen.
 
-Wie Sie sehen können wurde die Anzahl der Nodes 13 auf 2 Millionen und Anzahl der Ways 2 Millionen 450000 reduziert.
+Wie Sie sehen können wurde die Anzahl der Nodes von 13 Millionen auf 2 Millionen und die Anzahl der Ways von 2 Millionen auf 450.000 reduziert.
 Dies ist ein wichtiger Schritt zur Optimierung der Daten für die Verwendung in Routing-Engines.
 Je weniger Daten gelesen und verarbeitet werden müssen, desto schneller ist die Erstellung des Routing-Graphens.
 
