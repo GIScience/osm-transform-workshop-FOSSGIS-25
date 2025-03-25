@@ -5,16 +5,16 @@ jupyter book accompanying the osm-transform workshop held at FOSSGIS 2025
 
 1. Create a new python environment. 
 
-   ```
-   python -m venv .venv
-   source .venv/bin/activate
-   ```
+```bash
+python -m venv .venv
+source .venv/bin/activate
+```
 
 2. Install required packages 
    
-   ```
-   pip install jupyter-book ghp-import
-   ```
+```bash
+pip install -r requirements.txt
+```
 g
 ## How to build and deploy
 
