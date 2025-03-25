@@ -15,7 +15,7 @@ Zu den Hauptfunktionen gehören:
 ## 2. Voraussetzungen
 
 - **Docker**: Container-Plattform für die OSM-Transform-Installation
-- **curl**: Kommandozeilentool für HTTP-Anfragen
+- **cURL**: Kommandozeilentool für HTTP-Anfragen
 - **Linux oder macOS**: Betriebssysteme mit vollen Docker-Funktionen
 
 ## 3. Arbeitsumgebung einrichten
