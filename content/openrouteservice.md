@@ -6,8 +6,8 @@
 
 - **Docker**: Container-Plattform für die ORS-Installation
 - **Docker Compose**: Tool zur einfachen Verwaltung von Docker-Containern
-- **curl**: Kommandozeilentool für HTTP-Anfragen
-- **Git**: Versionskontrollsystem zum Klonen des Workshop-Repositories
+- **cURL**: Kommandozeilentool für HTTP-Anfragen
+- **git**: Versionskontrollsystem zum Klonen des Workshop-Repositories
 - **Linux oder macOS**: Betriebssysteme mit vollen Docker-Funktionen
 - **Mindestens 4GB RAM**: Für die Grapherstellung empfohlen
 
@@ -37,7 +37,7 @@ curl -C - https://download.geofabrik.de/europe/germany/nordrhein-westfalen/muens
 curl -C - https://download.geofabrik.de/europe/germany/nordrhein-westfalen/detmold-regbez-latest.osm.pbf -o ors-docker-latest/files/detmold-regbez-latest.osm.pbf
 ```
 
-**Hinweis zu curl-Optionen:**
+**Hinweis zu cURL-Optionen:**
 
 - `-C -`: Ermöglicht das Fortsetzen eines unterbrochenen Downloads
 - `-o`: Bestimmt den Namen der Ausgabedatei
