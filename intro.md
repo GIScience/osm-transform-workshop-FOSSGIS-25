@@ -2,19 +2,24 @@
 
 Willkommen zum Workshop auf der FOSSGIS 2025 zu openrouteservice und OSM Transform.
 
-Hier kommen noch ein paar einleitende Worte, vielleicht die Struktur.
+Wir beschäftigen uns mit einigen Komponenten aus dem openrouteservice-Universum, konkret:
+* [openrouteservice](https://github.com/GIscience/openrouteservice)
+* [osm-transform](https://github.com/GIscience/osm-transform)
+* [openpoiservice](https://github.com/GIScience/openpoiservice/)
+
+Wir gucken uns an, wie wir diese selber aufsetzen können, wie sie eingebunden und wie sie genutzt werden
 
 ## Der Plan für heute
 
-Der muss noch geupdated werden.
 
-| Zeit  | Thema                      |
-|-------|----------------------------|
-| 16:00 | Intro                      |
-| 16:05 | Openrouteservice aufsetzen |
-| 16:30 | OSM Transform              |
-| 17:45 | Anwendung                  |
-| 18:00 | Schluss                    |
+| Zeit  | Thema                             |
+|-------|-----------------------------------|
+| 11:10 | Intro                             |
+| 11:15 | Openrouteservice selber aufsetzen |
+| 11:45 | OSM Transform                     |
+| 12:00 | Anwendungsbeispiel: Nächster POI  |
+| 12:15 | Offene Fragen                     |
+| 12:45 | Mitagessen                        |
 
 
 ## Wer sind wir
@@ -24,8 +29,8 @@ Der muss noch geupdated werden.
 :alt: Julian Psotta
 :class: organiser-profile-photo
 ```
-Bisschen was zu Julian
 
+Julian ist der Product Owner der Technical Innovation Group beim Heidelberg Institute for Geoinformation Technology (HeiGIT), welches unter anderem die Routing Engine `openrouteservice` entwickelt.
 
 <div style="clear: both"></div>
 
@@ -33,8 +38,10 @@ Bisschen was zu Julian
 :alt: Jakob Schnell
 :class: organiser-profile-photo
 ```
+Jakob Schnell nutzt seit über 15 Jahren die OSM und entwickelt seit über 10 Jahren Software.
+In den letzten 4 Jahren überschneiden sich diese beiden Gebiete durch seine Tätigkeit als Software-Entwickler bei der HeiGIT gGmbH zunehmend. Sein Fokus liegt dabei auf klarer Kommunikation und Prozessoptimierung – sein Hintergrund aus der diskreten Optimierung kommt ihm dabei immer wieder in die Quere.
 
-Bisschen was zu Jakob.
+Er ist als Dozent und Lehrgangsleiter in unversitärem und außeruniversitärem Umfeld tätig.
 
 
 <div style="clear: both"></div>
