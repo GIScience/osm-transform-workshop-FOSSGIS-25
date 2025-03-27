@@ -1,0 +1,947 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Openrouteservice aufsetzen &#8212; OSM Transform Workshop - FOSSGIS 2025</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/style.css?v=f2ab6d6d" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'content/openrouteservice';</script>
+    <link rel="icon" href="../_static/openrouteservice.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="OSM-Transform - PBF-Dateien anreichern und filtern" href="osm-transform.html" />
+    <link rel="prev" title="OSM-Transform — Leistungsstarke OSM-Datenvorbereitung für Routing Engines" href="../intro.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/openrouteservice.png" class="logo__image only-light" alt="OSM Transform Workshop - FOSSGIS 2025 - Home"/>
+    <script>document.write(`<img src="../_static/openrouteservice.png" class="logo__image only-dark" alt="OSM Transform Workshop - FOSSGIS 2025 - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    OSM-Transform — Leistungsstarke OSM-Datenvorbereitung für Routing Engines
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Workshop Content</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">1. openrouteservice aufsetzen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="osm-transform.html">2. Arbeiten mit osm-transform</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nearest-poi.html">3. Den nächsten POI finden</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/GIScience/osm-transform-workshop-FOSSGIS-25" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/GIScience/osm-transform-workshop-FOSSGIS-25/issues/new?title=Issue%20on%20page%20%2Fcontent/openrouteservice.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/content/openrouteservice.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Openrouteservice aufsetzen</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#basisumgebung-einrichten">1. Basisumgebung einrichten</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#anforderungen">Anforderungen</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#repository-klonen">Repository klonen</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pbf-datei-herunterladen">PBF-Datei herunterladen</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#docker-compose-fur-openrouteservice">2. Docker Compose für Openrouteservice</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#openrouteservice-mit-docker-compose-starten">3. Openrouteservice mit Docker Compose starten</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#container-mit-basis-konfiguration-starten-auto-profil-mit-munster-daten">Container mit Basis-Konfiguration starten (Auto-Profil mit Münster-Daten)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#api-verfugbarkeit-prufen">API-Verfügbarkeit prüfen</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#openrouteservice-mit-mehreren-profilen">4. Openrouteservice mit mehreren Profilen</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#openrouteservice-mit-unterschiedlichen-pbf-dateien-pro-profil-munster-und-detmold">5. Openrouteservice mit unterschiedlichen PBF-Dateien pro Profil (Münster und Detmold)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#openrouteservice-mit-historischen-pbf-dateien">6. Openrouteservice mit historischen PBF-Dateien</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#container-setup-mit-munster-und-historischem-munster-pbf-dateien">1. Container Setup mit Münster und historischem Münster PBF-Dateien</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#historische-pbf-dateien-herunterladen">Historische PBF-Dateien herunterladen</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#starten-der-beiden-openrouteservice-container">Starten der beiden Openrouteservice-Container</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#visualisierung-historischer-daten-in-qgis">2. Visualisierung historischer Daten in QGIS</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ors-tools-plugin-installieren">ORS-Tools-Plugin installieren</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#lokale-openrouteservice-instanz-konfigurieren">Lokale Openrouteservice-Instanz konfigurieren</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#exportieren-und-visualisieren-der-routing-graphen">Exportieren und Visualisieren der Routing-Graphen</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#aufraumen-und-ressourcen-freigeben">7. Aufräumen und Ressourcen freigeben</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#container-stoppen-und-entfernen">Container stoppen und entfernen</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dateien-und-verzeichnisse-aufraumen">Dateien und Verzeichnisse aufräumen</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#zusammenfassung">8. Zusammenfassung</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="openrouteservice-aufsetzen">
+<h1>Openrouteservice aufsetzen<a class="headerlink" href="#openrouteservice-aufsetzen" title="Link to this heading">#</a></h1>
+<section id="basisumgebung-einrichten">
+<h2>1. Basisumgebung einrichten<a class="headerlink" href="#basisumgebung-einrichten" title="Link to this heading">#</a></h2>
+<section id="anforderungen">
+<h3>Anforderungen<a class="headerlink" href="#anforderungen" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Docker</strong>: Container-Plattform für die ORS-Installation</p></li>
+<li><p><strong>Docker Compose</strong>: Tool zur einfachen Verwaltung von Docker-Containern</p></li>
+<li><p><strong>cURL</strong>: Kommandozeilentool für HTTP-Anfragen</p></li>
+<li><p><strong>git</strong>: Versionskontrollsystem zum Klonen des Workshop-Repositories</p></li>
+<li><p><strong>Linux oder macOS</strong>: Betriebssysteme mit vollen Docker-Funktionen</p></li>
+<li><p><strong>Mindestens 4GB RAM</strong>: Für die Grapherstellung empfohlen</p></li>
+</ul>
+</section>
+<section id="repository-klonen">
+<h3>Repository klonen<a class="headerlink" href="#repository-klonen" title="Link to this heading">#</a></h3>
+<p>Wir beginnen damit, das Workshop-Repository zu klonen, welches alle benötigten Dateien enthält, einschließlich der Docker Compose-Konfiguration.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Repository klonen</span>
+git<span class="w"> </span>clone<span class="w"> </span>https://github.com/GIScience/osm-transform-workshop-FOSSGIS-25.git
+<span class="nb">cd</span><span class="w"> </span>osm-transform-workshop-FOSSGIS-25
+
+<span class="c1"># Verzeichnisse für ORS-Dateien erstellen</span>
+mkdir<span class="w"> </span>-p<span class="w"> </span>ors-docker-latest/files<span class="w"> </span>ors-docker-historic/files
+</pre></div>
+</div>
+</section>
+<section id="pbf-datei-herunterladen">
+<h3>PBF-Datei herunterladen<a class="headerlink" href="#pbf-datei-herunterladen" title="Link to this heading">#</a></h3>
+<p>Für den ersten Teil dieser Anleitung arbeiten wir mit zwei PBF-Dateien: Münster und Detmold.
+Es können jederzeit andere PBF-Dateien von Geofabrik heruntergeladen werden: <a class="reference external" href="https://download.geofabrik.de">https://download.geofabrik.de</a></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Münster PBF-Datei herunterladen</span>
+curl<span class="w"> </span>-C<span class="w"> </span>-<span class="w"> </span>https://download.geofabrik.de/europe/germany/nordrhein-westfalen/muenster-regbez-latest.osm.pbf<span class="w"> </span>-o<span class="w"> </span>ors-docker-latest/files/muenster-regbez-latest.osm.pbf
+
+<span class="c1"># Detmold PBF-Datei herunterladen</span>
+curl<span class="w"> </span>-C<span class="w"> </span>-<span class="w"> </span>https://download.geofabrik.de/europe/germany/nordrhein-westfalen/detmold-regbez-latest.osm.pbf<span class="w"> </span>-o<span class="w"> </span>ors-docker-latest/files/detmold-regbez-latest.osm.pbf
+</pre></div>
+</div>
+<p><strong>Hinweis zu cURL-Optionen:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-C</span> <span class="pre">-</span></code>: Ermöglicht das Fortsetzen eines unterbrochenen Downloads</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-o</span></code>: Bestimmt den Namen der Ausgabedatei</p></li>
+</ul>
+</section>
+</section>
+<section id="docker-compose-fur-openrouteservice">
+<h2>2. Docker Compose für Openrouteservice<a class="headerlink" href="#docker-compose-fur-openrouteservice" title="Link to this heading">#</a></h2>
+<p>Das geklonte Repository enthält bereits eine vorkonfigurierte <code class="docutils literal notranslate"><span class="pre">docker-compose.yml</span></code> Datei im Hauptverzeichnis. Diese Datei definiert verschiedene Openrouteservice-Container mit unterschiedlichen Konfigurationen:</p>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ors-app</span></code>: Basis-Konfiguration mit dem Auto-Profil und Münster-Daten</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ors-app-historic</span></code>: Container mit historischen Münster-Daten von 2014</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ors-app-multi-profile</span></code>: Container mit mehreren Profilen (Auto und Fahrrad)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ors-app-multi-source</span></code>: Container mit unterschiedlichen Datenquellen pro Profil</p></li>
+</ol>
+<p>Sie können den Inhalt der Datei mit einem Texteditor inspizieren:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Docker Compose-Datei anzeigen</span>
+cat<span class="w"> </span>docker-compose.yml
+</pre></div>
+</div>
+</section>
+<section id="openrouteservice-mit-docker-compose-starten">
+<h2>3. Openrouteservice mit Docker Compose starten<a class="headerlink" href="#openrouteservice-mit-docker-compose-starten" title="Link to this heading">#</a></h2>
+<section id="container-mit-basis-konfiguration-starten-auto-profil-mit-munster-daten">
+<h3>Container mit Basis-Konfiguration starten (Auto-Profil mit Münster-Daten)<a class="headerlink" href="#container-mit-basis-konfiguration-starten-auto-profil-mit-munster-daten" title="Link to this heading">#</a></h3>
+<p>Zunächst starten wir den Openrouteservice-Container mit der Basis-Konfiguration, die das Auto-Profil und Münster-Daten verwendet.</p>
+<p>Der betreffende Dienst in der <code class="docutils literal notranslate"><span class="pre">docker-compose.yml</span></code> Datei ist <code class="docutils literal notranslate"><span class="pre">ors-app</span></code> und beinhaltet die folgende Konfiguration:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">ors-app</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">openrouteservice/openrouteservice:latest</span>
+<span class="w">  </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ors-app</span>
+<span class="w">  </span><span class="nt">user</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;${UID:-1000}:${GID:-1000}&quot;</span>
+<span class="w">  </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;8080:8082&quot;</span>
+<span class="w">  </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./ors-docker-latest:/home/ors</span>
+<span class="w">  </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CONTAINER_LOG_LEVEL=INFO</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">XMS=1g</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">XMX=2g</span><span class="w"> </span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">REBUILD_GRAPHS=true</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ORS_ENGINE_PROFILES_DRIVING_CAR_BUILD_SOURCE_FILE=/home/ors/files/muenster-regbez-latest.osm.pbf</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ORS_ENGINE_PROFILES_DRIVING_CAR_ENABLED=true</span>
+</pre></div>
+</div>
+<p><strong>Hinweis zu der Konfiguration:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">image</span></code>: Docker-Image für Openrouteservice</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">container_name</span></code>: Name des Containers</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">user</span></code>: Benutzer-ID und Gruppen-ID für den Container. 1000 ist der Standardwert für den ersten Benutzer auf den meisten Systemen und erlaubt den Zugriff auf die gemounteten Dateien des Containers.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ports</span></code>: Portweiterleitung von Container-Port 8082 auf Host-Port 8080</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">volumes</span></code>: Mount-Punkt für die Arbeitsumgebung des Containers</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">environment</span></code>: Umgebungsvariablen für den Container, einschließlich der PBF-Datei und des Profils</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">REBUILD_GRAPHS</span></code>: Erzwingt den Neuaufbau der Routing-Graphen</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ORS_ENGINE_PROFILES_DRIVING_CAR_BUILD_SOURCE_FILE</span></code>: Pfad zur Münster PBF-Datei</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ORS_ENGINE_PROFILES_DRIVING_CAR_ENABLED</span></code>: Aktiviert das Auto-Profil</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">XMS</span></code> und <code class="docutils literal notranslate"><span class="pre">XMX</span></code>: Speichergröße für den Container</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">CONTAINER_LOG_LEVEL</span></code>: Log-Level für den Container</p></li>
+</ul>
+</li>
+</ul>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Container starten</span>
+docker-compose<span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span>ors-app
+
+<span class="c1"># Logs überwachen</span>
+docker-compose<span class="w"> </span>logs<span class="w"> </span>-f<span class="w"> </span>ors-app
+</pre></div>
+</div>
+</section>
+<section id="api-verfugbarkeit-prufen">
+<h3>API-Verfügbarkeit prüfen<a class="headerlink" href="#api-verfugbarkeit-prufen" title="Link to this heading">#</a></h3>
+<p>Nachdem der Container gestartet wurde, kann die API unter <code class="docutils literal notranslate"><span class="pre">http://localhost:8080/ors</span></code> erreicht werden.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Health-Endpunkt prüfen</span>
+curl<span class="w"> </span>http://localhost:8080/ors/v2/health
+
+<span class="c1"># Verfügbare Profile überprüfen</span>
+curl<span class="w"> </span>http://localhost:8080/ors/v2/status
+</pre></div>
+</div>
+</section>
+</section>
+<section id="openrouteservice-mit-mehreren-profilen">
+<h2>4. Openrouteservice mit mehreren Profilen<a class="headerlink" href="#openrouteservice-mit-mehreren-profilen" title="Link to this heading">#</a></h2>
+<p>Um den Openrouteservice mit mehreren Profilen zu starten, bearbeiten Sie die <code class="docutils literal notranslate"><span class="pre">docker-compose.yml</span></code> Datei und entfernen Sie die Kommentarzeichen vor dem <code class="docutils literal notranslate"><span class="pre">ors-app-multi-profile</span></code>-Service.
+Dieser Service beinhaltet die folgende Konfiguration:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">ors-app-multi-profile</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">openrouteservice/openrouteservice:latest</span>
+<span class="w">  </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ors-app-multi-profile</span>
+<span class="w">  </span><span class="nt">user</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;${UID:-1000}:${GID:-1000}&quot;</span>
+<span class="w">  </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;8081:8082&quot;</span>
+<span class="w">  </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./ors-docker-latest:/home/ors</span>
+<span class="w">  </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CONTAINER_LOG_LEVEL=INFO</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">XMS=1g</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">XMX=2g</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">REBUILD_GRAPHS=true</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ORS_ENGINE_PROFILE_DEFAULT_BUILD_SOURCE_FILE=/home/ors/files/muenster-regbez-latest.osm.pbf</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ORS_ENGINE_PROFILES_DRIVING_CAR_ENABLED=true</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ORS_ENGINE_PROFILES_CYCLING_REGULAR_ENABLED=true</span>
+</pre></div>
+</div>
+<p><strong>Hinweis zu der Konfiguration:</strong>
+Siehe vorherigen Abschnitt für die generellen Informationen zur Konfiguration.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ORS_ENGINE_PROFILE_DEFAULT_BUILD_SOURCE_FILE</span></code>: Pfad zur Münster PBF-Datei</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ORS_ENGINE_PROFILES_DRIVING_CAR_ENABLED</span></code>: Aktiviert das Auto-Profil</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ORS_ENGINE_PROFILES_CYCLING_REGULAR_ENABLED</span></code>: Aktiviert das Fahrrad-Profil</p></li>
+</ul>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Bearbeiten Sie die docker-compose.yml und aktivieren Sie den multi-profile Service</span>
+<span class="c1"># Stoppen Sie bestehende Services</span>
+docker-compose<span class="w"> </span>down
+
+<span class="c1"># Starten Sie den Service mit mehreren Profilen</span>
+docker-compose<span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span>ors-app-multi-profile
+
+<span class="c1"># Logs überwachen</span>
+docker-compose<span class="w"> </span>logs<span class="w"> </span>-f<span class="w"> </span>ors-app-multi-profile
+</pre></div>
+</div>
+<p>Die API ist unter <code class="docutils literal notranslate"><span class="pre">http://localhost:8081/ors</span></code> erreichbar und kann über die selben <code class="docutils literal notranslate"><span class="pre">health</span></code>- und <code class="docutils literal notranslate"><span class="pre">status</span></code>-Endpunkte wie zuvor überprüft werden.</p>
+</section>
+<section id="openrouteservice-mit-unterschiedlichen-pbf-dateien-pro-profil-munster-und-detmold">
+<h2>5. Openrouteservice mit unterschiedlichen PBF-Dateien pro Profil (Münster und Detmold)<a class="headerlink" href="#openrouteservice-mit-unterschiedlichen-pbf-dateien-pro-profil-munster-und-detmold" title="Link to this heading">#</a></h2>
+<p>Um den Openrouteservice mit unterschiedlichen PBF-Dateien pro Profil zu starten, aktivieren Sie den <code class="docutils literal notranslate"><span class="pre">ors-app-multi-source</span></code>-Service in der <code class="docutils literal notranslate"><span class="pre">docker-compose.yml</span></code>.
+Dieser Service beinhaltet die folgende Konfiguration:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">ors-app-multi-source</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">openrouteservice/openrouteservice:latest</span>
+<span class="w">  </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ors-app-multi-source</span>
+<span class="w">  </span><span class="nt">user</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;${UID:-1000}:${GID:-1000}&quot;</span>
+<span class="w">  </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;8082:8082&quot;</span>
+<span class="w">  </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./ors-docker-latest:/home/ors</span>
+<span class="w">  </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CONTAINER_LOG_LEVEL=INFO</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">XMS=1g</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">XMX=2g</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">REBUILD_GRAPHS=true</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ORS_ENGINE_PROFILE_DEFAULT_BUILD_SOURCE_FILE=/home/ors/files/muenster-regbez-latest.osm.pbf</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ORS_ENGINE_PROFILES_DRIVING_CAR_ENABLED=true</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ORS_ENGINE_PROFILES_CYCLING_REGULAR_ENABLED=true</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ORS_ENGINE_PROFILES_CYCLING_REGULAR_BUILD_SOURCE_FILE=/home/ors/files/detmold-regbez-latest.osm.pbf</span>
+</pre></div>
+</div>
+<p><strong>Hinweis zu der Konfiguration:</strong>
+Siehe vorherigen Abschnitt für die generellen Informationen zur Konfiguration.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ORS_ENGINE_PROFILE_DEFAULT_BUILD_SOURCE_FILE</span></code>: Pfad zur Münster PBF-Datei</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ORS_ENGINE_PROFILES_DRIVING_CAR_ENABLED</span></code>: Aktiviert das Auto-Profil</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ORS_ENGINE_PROFILES_CYCLING_REGULAR_ENABLED</span></code>: Aktiviert das Fahrrad-Profil</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ORS_ENGINE_PROFILES_CYCLING_REGULAR_BUILD_SOURCE_FILE</span></code>: Pfad zur Detmold PBF-Datei</p></li>
+</ul>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Bearbeiten Sie die docker-compose.yml und aktivieren Sie den multi-source Service</span>
+<span class="c1"># Stoppen Sie bestehende Services</span>
+docker-compose<span class="w"> </span>down
+
+<span class="c1"># Starten Sie den Service mit unterschiedlichen Datenquellen pro Profil</span>
+docker-compose<span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span>ors-app-multi-source
+
+<span class="c1"># Logs überwachen</span>
+docker-compose<span class="w"> </span>logs<span class="w"> </span>-f<span class="w"> </span>ors-app-multi-source
+</pre></div>
+</div>
+<p>Die API ist dann unter <code class="docutils literal notranslate"><span class="pre">http://localhost:8082/ors</span></code> für beide Profile erreichbar und kann über die selben <code class="docutils literal notranslate"><span class="pre">health</span></code>- und <code class="docutils literal notranslate"><span class="pre">status</span></code>-Endpunkte wie zuvor überprüft werden.</p>
+</section>
+<section id="openrouteservice-mit-historischen-pbf-dateien">
+<h2>6. Openrouteservice mit historischen PBF-Dateien<a class="headerlink" href="#openrouteservice-mit-historischen-pbf-dateien" title="Link to this heading">#</a></h2>
+<p><strong>Limitationen</strong>: Um die historischen Daten zu visualisieren, können wir QGIS und das <code class="docutils literal notranslate"><span class="pre">ORS-Tools</span></code>-Plugin verwenden.
+Das <code class="docutils literal notranslate"><span class="pre">ORS-Tools</span></code>-Plugin ermöglicht es, die Funktionalitäten von Openrouteservice in QGIS zu nutzen und zu verarbeiten.
+Die derzeitige Version erlaubt es noch nicht, andere als die Standardprofile zu verwenden (z.B. <code class="docutils literal notranslate"><span class="pre">car-historic</span></code>), aber wir können mit einem Workaround die historischen Daten visualisieren.</p>
+<section id="container-setup-mit-munster-und-historischem-munster-pbf-dateien">
+<h3>1. Container Setup mit Münster und historischem Münster PBF-Dateien<a class="headerlink" href="#container-setup-mit-munster-und-historischem-munster-pbf-dateien" title="Link to this heading">#</a></h3>
+<section id="historische-pbf-dateien-herunterladen">
+<h4>Historische PBF-Dateien herunterladen<a class="headerlink" href="#historische-pbf-dateien-herunterladen" title="Link to this heading">#</a></h4>
+<p>Im folgenden Abschnitt werden wir einen Openrouteservice-Container mit historischen PBF-Dateien starten.</p>
+<p>Zunächst schauen wir uns auf der Geofabrik-Website die verfügbaren PBF-Dateien an: <a class="reference external" href="https://download.geofabrik.de/europe/germany/nordrhein-westfalen/muenster-regbez.html">https://download.geofabrik.de/europe/germany/nordrhein-westfalen/muenster-regbez.html</a>.
+Dort finden wir unter anderem historische PBF-Dateien, die wir für unsere Zwecke verwenden können.</p>
+<p>Um zu der Übersicht mit den historischen PBF-Dateien zu gelangen, klicken wir auf den Link “raw directory index”.</p>
+<p>Dort wählen wir die älteste verfügbare PBF-Datei vom 02.01.2014 aus: <code class="docutils literal notranslate"><span class="pre">muenster-regbez-140101.osm.pbf</span></code>.
+<img alt="Historische PBF-Datei" src="../_images/geofabrik_historic_data_selection.png" /></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Ordnerstruktur für historische Daten erstellen</span>
+mkdir<span class="w"> </span>-p<span class="w"> </span>ors-docker-historic/files
+
+<span class="c1"># Historische Münster PBF-Datei herunterladen</span>
+curl<span class="w"> </span>-C<span class="w"> </span>-<span class="w"> </span>https://download.geofabrik.de/europe/germany/nordrhein-westfalen/muenster-regbez-140101.osm.pbf<span class="w"> </span>-o<span class="w"> </span>ors-docker-historic/files/muenster-regbez-140101.osm.pbf
+</pre></div>
+</div>
+</section>
+<section id="starten-der-beiden-openrouteservice-container">
+<h4>Starten der beiden Openrouteservice-Container<a class="headerlink" href="#starten-der-beiden-openrouteservice-container" title="Link to this heading">#</a></h4>
+<p>Mit Docker Compose können wir zwei Container gleichzeitig starten - einen mit aktuellen und einen mit historischen Daten.
+Dafür müssen wir die <code class="docutils literal notranslate"><span class="pre">docker-compose.yml</span></code> Datei anpassen und die entsprechenden Dienste <code class="docutils literal notranslate"><span class="pre">ors-app</span></code> und <code class="docutils literal notranslate"><span class="pre">ors-app-historic</span></code> einkommentiert werden.</p>
+<p>Der Inhalt der Datei sollte wie folgt aussehen:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">ors-app</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">openrouteservice/openrouteservice:latest</span>
+<span class="w">  </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ors-app</span>
+<span class="w">  </span><span class="nt">user</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;${UID:-1000}:${GID:-1000}&quot;</span>
+<span class="w">  </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;8080:8082&quot;</span>
+<span class="w">  </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./ors-docker-latest:/home/ors</span>
+<span class="w">  </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CONTAINER_LOG_LEVEL=INFO</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">XMS=1g</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">XMX=2g</span><span class="w"> </span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">REBUILD_GRAPHS=true</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ORS_ENGINE_PROFILES_DRIVING_CAR_BUILD_SOURCE_FILE=/home/ors/files/muenster-regbez-latest.osm.pbf</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ORS_ENGINE_PROFILES_DRIVING_CAR_ENABLED=true</span>
+
+<span class="nt">ors-app-historic</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">openrouteservice/openrouteservice:latest</span>
+<span class="w">  </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ors-app-historic</span>
+<span class="w">  </span><span class="nt">user</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;${UID:-1000}:${GID:-1000}&quot;</span>
+<span class="w">  </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;8083:8082&quot;</span>
+<span class="w">  </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./ors-docker-historic:/home/ors</span>
+<span class="w">  </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CONTAINER_LOG_LEVEL=INFO</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">XMS=1g</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">XMX=2g</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">REBUILD_GRAPHS=true</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ORS_ENGINE_PROFILES_DRIVING_CAR_BUILD_SOURCE_FILE=/home/ors/files/muenster-regbez-140101.osm.pbf</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ORS_ENGINE_PROFILES_DRIVING_CAR_ENABLED=true</span>
+</pre></div>
+</div>
+<p><strong>Hinweis zu der Konfiguration:</strong>
+Die Konfiguration ist im Wesentlichen die gleiche wie zuvor, mit dem Unterschied, dass wir einen zweiten Container mit historischen Daten starten.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Services starten</span>
+docker-compose<span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span>ors-app<span class="w"> </span>ors-app-historic
+
+<span class="c1"># Logs überwachen</span>
+docker-compose<span class="w"> </span>logs<span class="w"> </span>-f
+</pre></div>
+</div>
+<p>Die Services sind unter folgenden URLs erreichbar:</p>
+<ul class="simple">
+<li><p>Aktuelle Daten: <code class="docutils literal notranslate"><span class="pre">http://localhost:8080/ors</span></code></p></li>
+<li><p>Historische Daten: <code class="docutils literal notranslate"><span class="pre">http://localhost:8083/ors</span></code></p></li>
+</ul>
+<p>Nun können wir die Verfügbarkeit prüfen:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Aktuelle API prüfen</span>
+curl<span class="w"> </span>http://localhost:8080/ors/v2/health
+
+<span class="c1"># Historische API prüfen</span>
+curl<span class="w"> </span>http://localhost:8083/ors/v2/health
+</pre></div>
+</div>
+</section>
+</section>
+<section id="visualisierung-historischer-daten-in-qgis">
+<h3>2. Visualisierung historischer Daten in QGIS<a class="headerlink" href="#visualisierung-historischer-daten-in-qgis" title="Link to this heading">#</a></h3>
+<p>Wir haben zwei Openrouteservice-Container gestartet, die jeweils auf Port 8080 und 8083 erreichbar sind und unterschiedliche PBF-Dateien verwenden.
+Nun können wir damit beginnen die historischen und aktuellen Daten in QGIS zu visualisieren und miteinander zu vergleichen.</p>
+<section id="ors-tools-plugin-installieren">
+<h4>ORS-Tools-Plugin installieren<a class="headerlink" href="#ors-tools-plugin-installieren" title="Link to this heading">#</a></h4>
+<p>Zunächst installieren wir das <code class="docutils literal notranslate"><span class="pre">ORS-Tools</span></code>-Plugin in QGIS.
+Dazu öffnen wir QGIS und installieren die Erweiterung:</p>
+<p><img alt="ORS-Tools-Plugin installieren" src="../_images/qgis_orstools_plugin_install.png" /></p>
+</section>
+<section id="lokale-openrouteservice-instanz-konfigurieren">
+<h4>Lokale Openrouteservice-Instanz konfigurieren<a class="headerlink" href="#lokale-openrouteservice-instanz-konfigurieren" title="Link to this heading">#</a></h4>
+<p>Anschließend konfigurieren wir das <code class="docutils literal notranslate"><span class="pre">ORS-Tools</span></code>-Plugin, um die lokale Openrouteservice-Instanz zu verwenden.
+Dazu öffnen wir die Einstellungen des Plugins und wählen die <code class="docutils literal notranslate"><span class="pre">Provider</span></code>-Option aus.
+<img alt="ORS-Tools-Plugin konfigurieren" src="../_images/qgis_settings.png" />
+Dort fügen wir eine neue Konfiguration hinzu und geben die URLs der lokalen Openrouteservice-Instanz an.</p>
+<p>Zunächst konfigurieren wir die Openrouteservice-Instanz mit dem aktuellen Münster PBF-File:
+Dabei achten wir darauf, dass die URL wie folgt lautet: <code class="docutils literal notranslate"><span class="pre">http://localhost:8080/ors</span></code>.
+<img alt="ORS-Tools-Plugin konfigurieren" src="../_images/qgis_latest_provider_settings.png" /></p>
+<p>Danach konfigurieren wir die Openrouteservice-Instanz mit dem historischen Münster PBF-File.
+Dabei achten wir darauf, dass die URL wie folgt lautet: <code class="docutils literal notranslate"><span class="pre">http://localhost:8083/ors</span></code>.
+<img alt="ORS-Tools-Plugin konfigurieren" src="../_images/qgis_oldest_provider_settings.png" /></p>
+<p>Bei beiden Konfigurationen wird das Feld <code class="docutils literal notranslate"><span class="pre">API</span> <span class="pre">Key</span></code> leer gelassen, da wir uns mit eigenen Instanzen nicht authentifizieren müssen.</p>
+</section>
+<section id="exportieren-und-visualisieren-der-routing-graphen">
+<h4>Exportieren und Visualisieren der Routing-Graphen<a class="headerlink" href="#exportieren-und-visualisieren-der-routing-graphen" title="Link to this heading">#</a></h4>
+<p>Wir können nun mit dem <code class="docutils literal notranslate"><span class="pre">ORS-Tools</span></code>-Plugin die lokalen Openrouteservice-Instanzen verwenden.
+Zur besseren Veranschaulichung werden wir die Routing-Graphen exportieren und in QGIS visualisieren.</p>
+<p>Zunächst wählen wir in der <code class="docutils literal notranslate"><span class="pre">Processing</span> <span class="pre">Toolbox</span></code> ⇾ <code class="docutils literal notranslate"><span class="pre">Export</span> <span class="pre">Network</span> <span class="pre">from</span> <span class="pre">Map</span></code>.</p>
+<p><img alt="Export Network from Map" src="../_images/graph_export_toolbox.png" /></p>
+<p>Dort wählen wir die gewünschte Openrouteservice-Instanz (latest) und das Profil (driving-car) aus, für das wir den Routing-Graphen exportieren möchten.</p>
+<p><img alt="Export Network from Map" src="../_images/graph_export_window.png" /></p>
+<p>Mit der Bestätigung auf <code class="docutils literal notranslate"><span class="pre">Run</span></code> wird der Routing-Graph exportiert und in QGIS geladen.</p>
+<p>Dies machen wir auch für die historische Openrouteservice-Instanz, in dem wir die entsprechenden Einstellungen vornehmen und <code class="docutils literal notranslate"><span class="pre">oldest</span></code> als Provider auswählen.
+Mit erneuter Bestätigung auf <code class="docutils literal notranslate"><span class="pre">Run</span></code> wird der “alte” Routing-Graph exportiert und in QGIS geladen.</p>
+<p>Durch unterschiedliches Styling ist es nun möglich, die historischen und aktuellen Daten miteinander zu vergleichen.</p>
+<p><img alt="Historische und aktuelle Daten in QGIS" src="../_images/graph_export_qgis_styling.png" /></p>
+</section>
+</section>
+</section>
+<section id="aufraumen-und-ressourcen-freigeben">
+<h2>7. Aufräumen und Ressourcen freigeben<a class="headerlink" href="#aufraumen-und-ressourcen-freigeben" title="Link to this heading">#</a></h2>
+<p>Nach Abschluss des Workshops sollten Sie die Docker-Container stoppen und entfernen sowie nicht mehr benötigte Dateien löschen, um Speicherplatz freizugeben.</p>
+<section id="container-stoppen-und-entfernen">
+<h3>Container stoppen und entfernen<a class="headerlink" href="#container-stoppen-und-entfernen" title="Link to this heading">#</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Alle Container stoppen und entfernen</span>
+docker-compose<span class="w"> </span>down
+
+<span class="c1"># Überprüfen, ob Container entfernt wurden</span>
+docker<span class="w"> </span>ps<span class="w"> </span>-a<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>ors-app
+</pre></div>
+</div>
+</section>
+<section id="dateien-und-verzeichnisse-aufraumen">
+<h3>Dateien und Verzeichnisse aufräumen<a class="headerlink" href="#dateien-und-verzeichnisse-aufraumen" title="Link to this heading">#</a></h3>
+<p>Die heruntergeladenen PBF-Dateien und erstellten Graphen können je nach Region mehrere Gigabyte Speicherplatz belegen.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Größe der ORS-Verzeichnisse anzeigen</span>
+du<span class="w"> </span>-sh<span class="w"> </span>./ors-docker-*
+
+<span class="c1"># Optionaler Schritt: Verzeichnisse löschen, wenn nicht mehr benötigt</span>
+rm<span class="w"> </span>-rf<span class="w"> </span>./ors-docker-latest<span class="w"> </span>./ors-docker-historic
+rm<span class="w"> </span>-f<span class="w"> </span>docker-compose.yml
+</pre></div>
+</div>
+</section>
+</section>
+<section id="zusammenfassung">
+<h2>8. Zusammenfassung<a class="headerlink" href="#zusammenfassung" title="Link to this heading">#</a></h2>
+<p>Wir haben in diesem Tutorial gelernt, wie sich Openrouteservice-Container mit unterschiedlichen PBF-Dateien und Profilen starten lassen.
+Dabei haben wir uns auf die Konfiguration von Profilen für Autofahrer und Radfahrer konzentriert.
+Zudem haben wir gelernt, wie historische PBF-Dateien verwendet und mit QGIS visualisiert werden können.
+Zum wurde gezeigt, wie die Docker-Container aufgeräumt und nicht mehr benötigte Dateien gelöscht werden können.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./content"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../intro.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">OSM-Transform — Leistungsstarke OSM-Datenvorbereitung für Routing Engines</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="osm-transform.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">OSM-Transform - PBF-Dateien anreichern und filtern</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#basisumgebung-einrichten">1. Basisumgebung einrichten</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#anforderungen">Anforderungen</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#repository-klonen">Repository klonen</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pbf-datei-herunterladen">PBF-Datei herunterladen</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#docker-compose-fur-openrouteservice">2. Docker Compose für Openrouteservice</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#openrouteservice-mit-docker-compose-starten">3. Openrouteservice mit Docker Compose starten</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#container-mit-basis-konfiguration-starten-auto-profil-mit-munster-daten">Container mit Basis-Konfiguration starten (Auto-Profil mit Münster-Daten)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#api-verfugbarkeit-prufen">API-Verfügbarkeit prüfen</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#openrouteservice-mit-mehreren-profilen">4. Openrouteservice mit mehreren Profilen</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#openrouteservice-mit-unterschiedlichen-pbf-dateien-pro-profil-munster-und-detmold">5. Openrouteservice mit unterschiedlichen PBF-Dateien pro Profil (Münster und Detmold)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#openrouteservice-mit-historischen-pbf-dateien">6. Openrouteservice mit historischen PBF-Dateien</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#container-setup-mit-munster-und-historischem-munster-pbf-dateien">1. Container Setup mit Münster und historischem Münster PBF-Dateien</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#historische-pbf-dateien-herunterladen">Historische PBF-Dateien herunterladen</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#starten-der-beiden-openrouteservice-container">Starten der beiden Openrouteservice-Container</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#visualisierung-historischer-daten-in-qgis">2. Visualisierung historischer Daten in QGIS</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ors-tools-plugin-installieren">ORS-Tools-Plugin installieren</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#lokale-openrouteservice-instanz-konfigurieren">Lokale Openrouteservice-Instanz konfigurieren</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#exportieren-und-visualisieren-der-routing-graphen">Exportieren und Visualisieren der Routing-Graphen</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#aufraumen-und-ressourcen-freigeben">7. Aufräumen und Ressourcen freigeben</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#container-stoppen-und-entfernen">Container stoppen und entfernen</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dateien-und-verzeichnisse-aufraumen">Dateien und Verzeichnisse aufräumen</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#zusammenfassung">8. Zusammenfassung</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By HeiGIT gGmbH
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

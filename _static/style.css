@@ -1,0 +1,24 @@
+.banner-logo {
+    padding: 10px;
+    background-color: #FFFFFF;
+    height: 150px;
+    margin-bottom: 20px;
+}
+
+.organiser-profile-photo {
+    float: left;
+    margin: 20px;
+    height: 150px;
+}
+
+.footer-logo {
+    margin-right: 20px;
+    height: 5em;
+    background-color: #FFFFFF;
+    float: right;
+}
+
+.float-left {
+    float: left;
+    margin: 20px;
+}
